@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"family-web-server/src/log"
 	"family-web-server/src/web/common"
 	"family-web-server/src/web/controllers/v1/base"
 	"family-web-server/src/web/controllers/v1/manager"
@@ -14,15 +15,18 @@ import (
 
 type Controller struct {
 	cm           *manager.ControllerManager
+	l            *log.ConsoleLogger
 	loginService interfaces.ILoginService
 }
 
 func NewController(
 	cm *manager.ControllerManager,
+	l *log.ConsoleLogger,
 	loginService interfaces.ILoginService,
 ) *Controller {
 	c := &Controller{
 		cm,
+		l,
 		loginService,
 	}
 	c.RegisterController()
@@ -50,6 +54,7 @@ func (c *Controller) Captcha(context *gin.Context) {
 	}
 	// 获取 session 存储
 	session := sessions.Default(context)
+	c.l.Info("生成验证码:====              " + data.Text)
 	// 将正确答案存入 session
 	session.Set("captcha", data.Text)
 	session.Save()
@@ -74,16 +79,18 @@ func (c *Controller) Login(context *gin.Context) {
 
 	// 获取 session 中保存的验证码答案
 	captchaVal := session.Get("captcha")
-	if strings.ToLower(captchaVal.(string)) != strings.ToLower(u.Captcha) {
+	// 清除 session 中保存的验证码答案
+	session.Delete("captcha")
+	session.Save()
+	if captchaVal == nil || strings.ToLower(captchaVal.(string)) != strings.ToLower(u.Captcha) {
 		context.Error(common.CaptchaErrorError)
 		return
 	}
-
-	if err := c.loginService.Login(u); err != nil {
-		context.Error(common.SystemServerErrorError)
-		return
-	} else {
+	b, _ := c.loginService.Login(u)
+	if b {
 		context.JSON(200, common.NewSuccessResult(nil))
+	} else {
+		context.Error(common.LoginErrorError)
 	}
 
 }

@@ -5,6 +5,7 @@ const (
 	Success = "10000" // 请求成功
 
 	CaptchaError = "20001" // 验证码错误
+	LoginFailed  = "20002" // 用户名或密码错误
 
 	BadRequest       = "40000" // 请求不合法，参数缺失或无效
 	Unauthorized     = "40001" // 未授权访问，需要登录或验证
@@ -21,6 +22,7 @@ const (
 
 var (
 	CaptchaErrorError       = NewKnownError(CaptchaError, "验证码错误")
+	LoginErrorError         = NewKnownError(LoginFailed, "用户名或密码错误")
 	BadRequestError         = NewKnownError(BadRequest, "请求不合法，参数缺失或无效")
 	UnauthorizedError       = NewKnownError(Unauthorized, "未授权访问，需要登录或验证")
 	ForbiddenError          = NewKnownError(Forbidden, "禁止访问，权限不足")
