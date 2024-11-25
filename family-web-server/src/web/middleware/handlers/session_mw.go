@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"family-web-server/src/logs"
+	"family-web-server/src/log"
 	"family-web-server/src/web/middleware/manager"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -9,12 +9,12 @@ import (
 )
 
 type SessionMiddleware struct {
-	l *logs.ConsoleLogger
+	l *log.ConsoleLogger
 }
 
 func NewSessionMiddleware(
 	mwm *manager.MiddlewareManager,
-	l *logs.ConsoleLogger,
+	l *log.ConsoleLogger,
 ) *SessionMiddleware {
 	s := &SessionMiddleware{}
 	mwm.AddMiddleware(s)

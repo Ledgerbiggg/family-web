@@ -2,7 +2,7 @@ package web
 
 import (
 	"family-web-server/src/config"
-	"family-web-server/src/logs"
+	"family-web-server/src/log"
 	controllerHandlers "family-web-server/src/web/controllers/v1/handlers"
 	controllerManager "family-web-server/src/web/controllers/v1/manager"
 	middlewareHandlers "family-web-server/src/web/middleware/handlers"
@@ -25,7 +25,7 @@ var Module = fx.Module("web",
 	fx.Provide(impls.NewLoginService), // 登录服务
 	fx.Invoke(func(
 		c *config.GConfig,
-		l *logs.ConsoleLogger,
+		l *log.ConsoleLogger,
 		mwm *middlewareManager.MiddlewareManager,
 		cm *controllerManager.ControllerManager,
 	) {

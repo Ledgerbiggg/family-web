@@ -2,19 +2,19 @@ package handlers
 
 import (
 	"errors"
-	"family-web-server/src/logs"
+	"family-web-server/src/log"
 	"family-web-server/src/web/common"
 	"family-web-server/src/web/middleware/manager"
 	"github.com/gin-gonic/gin"
 )
 
 type ErrorMiddleware struct {
-	l *logs.ConsoleLogger
+	l *log.ConsoleLogger
 }
 
 func NewErrorMiddleware(
 	mwm *manager.MiddlewareManager,
-	l *logs.ConsoleLogger,
+	l *log.ConsoleLogger,
 ) *ErrorMiddleware {
 	e := &ErrorMiddleware{}
 	mwm.AddMiddleware(e)

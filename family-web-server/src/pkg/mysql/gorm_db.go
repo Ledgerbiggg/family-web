@@ -3,7 +3,7 @@ package mysql
 import (
 	"context"
 	"family-web-server/src/config"
-	"family-web-server/src/logs"
+	"family-web-server/src/log"
 	"family-web-server/src/pkg/base"
 	"fmt"
 	"gorm.io/driver/mysql"
@@ -13,7 +13,7 @@ import (
 type GormDb struct {
 	db     *gorm.DB
 	config *config.GConfig
-	log    *logs.ConsoleLogger
+	log    *log.ConsoleLogger
 	ctx    context.Context
 }
 
