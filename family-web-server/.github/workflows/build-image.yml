@@ -1,0 +1,53 @@
+name: Build and Push Docker Image to Aliyun
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 1: Log in to Aliyun Docker registry
+      - name: Log in to Aliyun Docker Registry
+        run: |
+          echo "${{ secrets.ALIYUN_DOCKER_PASSWORD }}" | docker login --username="${{ secrets.ALIYUN_DOCKER_USERNAME }}" --password-stdin registry.cn-hangzhou.aliyuncs.com
+
+      # Step 2: Read the version from the .VERSION file
+      - name: Read version from .VERSION file
+        id: get_version
+        run: |
+          VERSION=$(cat .VERSION)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "The version from .VERSION file is: $VERSION"
+
+      # Step 3: Build the Docker image using the version from the .VERSION file
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ github.event.repository.name }}:${VERSION} .
+
+      # Step 4: Check if the Docker image already exists
+      - name: Check if Docker Image Version Exists
+        run: |
+          IMAGE=registry.cn-hangzhou.aliyuncs.com/ledger_github/${{ github.event.repository.name }}:${VERSION}
+          if docker manifest inspect $IMAGE > /dev/null 2>&1; then
+            echo "Error: Docker image $IMAGE already exists. Exiting."
+            exit 1
+          fi
+          echo "Docker image $IMAGE does not exist. Proceeding to push."
+
+      # Step 5: Tag the image with the registry address and version
+      - name: Tag Docker Image And Push
+        if: success()
+        run: |
+          REPO_NAME=${{ github.event.repository.name }}
+          docker tag ${REPO_NAME}:${VERSION} registry.cn-hangzhou.aliyuncs.com/ledger_github/${REPO_NAME}:${VERSION}
+          docker push registry.cn-hangzhou.aliyuncs.com/ledger_github/${REPO_NAME}:${VERSION}

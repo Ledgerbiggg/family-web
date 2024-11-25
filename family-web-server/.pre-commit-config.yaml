@@ -1,0 +1,15 @@
+repos:
+  - repo: local
+    hooks:
+      - id: go-test
+        name: Run Go Tests
+        entry: bash -c "go test ./test/..."
+        language: system
+        pass_filenames: false
+        always_run: true
+#      - id: go-build-linux
+#        name: Build Linux Program
+#        entry: bash -c "GOOS=linux GOARCH=amd64 go build -o build/output-linux-amd64"
+#        language: system
+#        pass_filenames: false
+#        always_run: true

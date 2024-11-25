@@ -1,0 +1,29 @@
+# 配置文件环境
+mode: dev
+
+# 服务名称
+serviceName: family-web
+
+# 服务地址
+address:
+  ip: 10.147.18.26
+  port: 8001
+
+# 注册中心redis
+redis:
+  address: 10.147.18.26:6379
+  password: biaoge666
+  db: 0
+
+# 数据库
+mysql:
+  address: 10.147.18.26:3306
+  username: root
+  password: biaoge666
+  database: family-web
+
+# 日志等级
+logLevel: 1
+
+
+
