@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import router from "@/router";
+import api from "@/services/api.ts";
 
+// 在组件挂载后执行刷新验证码
+onMounted(() => {
+  refresh();
+});
 // 获取 captchaImage 的引用
 const captchaImage = ref<HTMLImageElement | null>(null);
 
@@ -22,18 +27,21 @@ const user = ref<User>({
 // 刷新验证码
 const refresh = () => {
   if (captchaImage.value && captchaImage.value.src) {
-    captchaImage.value.src = "http://localhost:8001/captcha?_t=" + Date.now();
+    captchaImage.value.src = import.meta.env.VITE_BASE_URL + "/captcha?_t=" + Date.now();
   }
 }
-
 // 登录方法
 const backLogin = () => {
   router.push("/login");
 }
 
 // 注册方法
-const register = () => {
-  console.log(user.value);
+const verify = () => {
+  api.get("/verify", {...user.value}).then((res: any) => {
+    console.log("red")
+  }).catch((rea: any) => {
+    refresh()
+  })
 }
 </script>
 
@@ -54,14 +62,14 @@ const register = () => {
       <div class="captcha-box">
         <input v-model="user.captcha" type="text"/>
         <div class="img-box">
-          <img ref ="captchaImage" @click="refresh" src="http://localhost:8001/captcha" alt="captcha">
+          <img ref="captchaImage" @click="refresh" src="" alt="captcha">
         </div>
       </div>
     </div>
     <div class="btn-box">
       <div>
         <button @click="backLogin">返回登录</button>
-        <button @click="register">验证</button>
+        <button @click="verify">验证</button>
       </div>
     </div>
   </div>

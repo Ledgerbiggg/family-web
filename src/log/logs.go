@@ -46,7 +46,7 @@ func (l *ConsoleLogger) log(level int, color, levelStr, message string) {
 
 		// 打开或创建日志文件 (根目录下的log.txt)
 		file, err := os.OpenFile(
-			fmt.Sprintf("./log/%s.txt", time.Now().Format("2006-01-02")),
+			fmt.Sprintf("./logs/%s.txt", time.Now().Format("2006-01-02")),
 			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			fmt.Printf("Error opening log file: %v\n", err)

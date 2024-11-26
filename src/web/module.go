@@ -17,6 +17,7 @@ var Module = fx.Module("web",
 	// 注册中间件
 	fx.Provide(middlewareManager.NewMiddlewareManager), // 中间件管理者
 	fx.Invoke(middlewareHandlers.NewErrorMiddleware),   // 错误中间件
+	fx.Invoke(middlewareHandlers.NewCorsMiddleware),    // 跨域中间件
 	fx.Invoke(middlewareHandlers.NewSessionMiddleware), // session中间件
 	// 注册控制器
 	fx.Provide(controllerManager.NewControllerManager), // 控制器管理者

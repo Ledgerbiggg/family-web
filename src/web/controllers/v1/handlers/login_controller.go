@@ -38,6 +38,7 @@ func (c *Controller) GetRoutes() []*base.Route {
 		{Method: "GET", Path: "/captcha", Handle: c.Captcha},
 		{Method: "POST", Path: "/login", Handle: c.Login},
 		{Method: "POST", Path: "/register", Handle: c.Register},
+		{Method: "POST", Path: "/verify", Handle: c.Verify},
 	}
 }
 
@@ -88,6 +89,7 @@ func (c *Controller) Login(context *gin.Context) {
 	}
 	b, _ := c.loginService.Login(u)
 	if b {
+		context.Header("token", "123")
 		context.JSON(200, common.NewSuccessResult(nil))
 	} else {
 		context.Error(common.LoginErrorError)
@@ -95,6 +97,12 @@ func (c *Controller) Login(context *gin.Context) {
 
 }
 
+// Register 注册
 func (c *Controller) Register(context *gin.Context) {
+
+}
+
+// Verify 找回密码
+func (c *Controller) Verify(context *gin.Context) {
 
 }

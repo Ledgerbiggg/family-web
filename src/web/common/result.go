@@ -1,8 +1,8 @@
 package common
 
 type Result struct {
-	Code    string `json:"Code"`
-	Message string `json:"Message"`
+	Code    string `json:"code"`
+	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
 }
 
