@@ -10,7 +10,7 @@ WORKDIR /go/src
 ENV GOPROXY https://goproxy.cn
 
 # Copy the local project files to the working directory
-ADD . /go/src
+ADD family-web-server /go/src
 
 # Compile the project
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -installsuffix cgo main.go
