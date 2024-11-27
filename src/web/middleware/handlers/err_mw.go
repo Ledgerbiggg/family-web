@@ -35,5 +35,5 @@ func (r *ErrorMiddleware) Handle() gin.HandlerFunc {
 }
 
 func (r *ErrorMiddleware) Order() int {
-	return 0
+	return 1
 }

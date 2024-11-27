@@ -1,10 +1,10 @@
-package handlers
+package v1
 
 import (
 	"family-web-server/src/log"
 	"family-web-server/src/web/common"
-	"family-web-server/src/web/controllers/v1/base"
-	"family-web-server/src/web/controllers/v1/manager"
+	"family-web-server/src/web/controllers/base"
+	"family-web-server/src/web/controllers/manager"
 	"family-web-server/src/web/models/dto/login"
 	"family-web-server/src/web/services/interfaces"
 	"github.com/gin-contrib/sessions"
@@ -87,8 +87,9 @@ func (c *Controller) Login(context *gin.Context) {
 		context.Error(common.CaptchaErrorError)
 		return
 	}
-	b, _ := c.loginService.Login(u)
+	b, _, _, _ := c.loginService.Login(u)
 	if b {
+		// 查询用户的角色
 		context.Header("token", "123")
 		context.JSON(200, common.NewSuccessResult(nil))
 	} else {
@@ -99,7 +100,6 @@ func (c *Controller) Login(context *gin.Context) {
 
 // Register 注册
 func (c *Controller) Register(context *gin.Context) {
-
 }
 
 // Verify 找回密码

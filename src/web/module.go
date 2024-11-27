@@ -3,8 +3,8 @@ package web
 import (
 	"family-web-server/src/config"
 	"family-web-server/src/log"
-	controllerHandlers "family-web-server/src/web/controllers/v1/handlers"
-	controllerManager "family-web-server/src/web/controllers/v1/manager"
+	controllerManager "family-web-server/src/web/controllers/manager"
+	controllerHandlers "family-web-server/src/web/controllers/v1"
 	middlewareHandlers "family-web-server/src/web/middleware/handlers"
 	middlewareManager "family-web-server/src/web/middleware/manager"
 	"family-web-server/src/web/services/impls"
@@ -19,6 +19,7 @@ var Module = fx.Module("web",
 	fx.Invoke(middlewareHandlers.NewErrorMiddleware),   // 错误中间件
 	fx.Invoke(middlewareHandlers.NewCorsMiddleware),    // 跨域中间件
 	fx.Invoke(middlewareHandlers.NewSessionMiddleware), // session中间件
+	fx.Invoke(middlewareHandlers.NewJwtMiddleware),     // jwt中间件
 	// 注册控制器
 	fx.Provide(controllerManager.NewControllerManager), // 控制器管理者
 	fx.Invoke(controllerHandlers.NewController),        // 登录控制器

@@ -28,7 +28,11 @@ type GConfig struct {
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
 		Database string `yaml:"database"`
-	}
+	} `yaml:"mysql"`
+	Jwt struct {
+		SecretKey  string `yaml:"secretKey"`
+		ExpireTime int    `yaml:"expireTime"`
+	} `yaml:"jwt"`
 }
 
 func LoadConfig() *GConfig {

@@ -29,5 +29,5 @@ func (s *SessionMiddleware) Handle() gin.HandlerFunc {
 }
 
 func (s *SessionMiddleware) Order() int {
-	return 1
+	return 3
 }

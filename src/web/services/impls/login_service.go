@@ -1,10 +1,12 @@
 package impls
 
 import (
+	"crypto/md5"
 	"family-web-server/src/pkg/mysql"
 	dto "family-web-server/src/web/models/dto/login"
 	entity "family-web-server/src/web/models/eneity/login"
 	"family-web-server/src/web/services/interfaces"
+	"family-web-server/src/web/utils"
 )
 
 type LoginService struct {
@@ -15,14 +17,21 @@ func NewLoginService(gorm *mysql.GormDb) interfaces.ILoginService {
 	return &LoginService{gorm: gorm}
 }
 
-func (l *LoginService) Login(loginUser *dto.UserDto) (bool, error) {
+// Login 查询数据库用户数据并比较密码
+func (l *LoginService) Login(loginUser *dto.UserDto) (bool, *entity.Role, []entity.Permission, error) {
 	var user1 entity.User
-	user := entity.NewUser(loginUser.Username, loginUser.Password)
+	var role entity.Role
+	var permissions []entity.Permission
 	l.gorm.GetDb().Where("username = ?", loginUser.Username).Find(&user1)
-	if user1.Password != user.Password {
-		return false, nil
+	md5.New().Sum([]byte(loginUser.Password))
+	if user1.Password != utils.Md5Encrypt(loginUser.Password) {
+		return false, nil, permissions, nil
 	}
-	return true, nil
+	// 查询用户角色+用户权限
+	l.gorm.GetDb().Where("id = ?", user1.RoleId).Find(&role)
+
+	l.gorm.GetDb().Where("role_id = ?", user1.RoleId).Find(&permissions)
+	return true, nil, permissions, nil
 }
 
 func (l *LoginService) Register(loginUser *dto.UserDto) error {

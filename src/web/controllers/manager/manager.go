@@ -1,7 +1,7 @@
 package manager
 
 import (
-	"family-web-server/src/web/controllers/v1/base"
+	"family-web-server/src/web/controllers/base"
 )
 
 type ControllerManager struct {
