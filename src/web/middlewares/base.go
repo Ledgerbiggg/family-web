@@ -1,8 +1,9 @@
-package base
+package middlewares
 
 import "github.com/gin-gonic/gin"
 
-type MiddlewareBase interface {
+// Base 中间件接口
+type Base interface {
 	Handle() gin.HandlerFunc
 	Order() int
 }

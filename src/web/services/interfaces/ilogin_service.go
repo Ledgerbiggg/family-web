@@ -6,5 +6,5 @@ import (
 )
 
 type ILoginService interface {
-	Login(loginUser *login.UserDto) (bool, *entity.Role, []entity.Permission, error)
+	Login(loginUser *login.UserDto) (bool, *entity.Role, []*entity.Permission, error)
 }

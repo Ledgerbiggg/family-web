@@ -4,7 +4,7 @@ import (
 	"family-web-server/src/config"
 	"family-web-server/src/log"
 	"family-web-server/src/web/common"
-	"family-web-server/src/web/middleware/manager"
+	"family-web-server/src/web/middlewares"
 	"family-web-server/src/web/utils"
 	"github.com/gin-gonic/gin"
 	"strings"
@@ -16,7 +16,7 @@ type JwtMiddleware struct {
 }
 
 func NewJwtMiddleware(
-	mwm *manager.MiddlewareManager,
+	mwm *middlewares.MiddlewareManager,
 	l *log.ConsoleLogger,
 	c *config.GConfig,
 ) *JwtMiddleware {
@@ -31,7 +31,10 @@ func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		path := context.Request.URL.Path
 		// 如果是/login 或者 /register 请求 或者 /verify，不需要验证 JWT
-		if path == "/login" || path == "/register" {
+		if path == "/captcha" ||
+			path == "/login" ||
+			path == "/register" ||
+			path == "/verify" {
 			context.Next()
 			return
 		}

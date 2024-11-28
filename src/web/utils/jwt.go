@@ -39,7 +39,7 @@ func GenerateToken(
 	// 使用 HMAC 签名算法创建 JWT
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// 生成 Token 字符串
-	return token.SignedString(secretKey)
+	return token.SignedString([]byte(secretKey))
 }
 
 // ParseToken 解析 JWT Token

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"family-web-server/src/log"
-	"family-web-server/src/web/middleware/manager"
+	"family-web-server/src/web/middlewares"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ type SessionMiddleware struct {
 }
 
 func NewSessionMiddleware(
-	mwm *manager.MiddlewareManager,
+	mwm *middlewares.MiddlewareManager,
 	l *log.ConsoleLogger,
 ) *SessionMiddleware {
 	s := &SessionMiddleware{}

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"family-web-server/src/log"
-	"family-web-server/src/web/middleware/manager"
+	"family-web-server/src/web/middlewares"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,7 +12,7 @@ type CorsMiddleware struct {
 }
 
 func NewCorsMiddleware(
-	mwm *manager.MiddlewareManager,
+	mwm *middlewares.MiddlewareManager,
 	l *log.ConsoleLogger,
 ) *CorsMiddleware {
 	c := &CorsMiddleware{}

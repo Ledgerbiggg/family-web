@@ -4,7 +4,6 @@ import (
 	"context"
 	"family-web-server/src/config"
 	"family-web-server/src/log"
-	"family-web-server/src/pkg/base"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -21,14 +20,17 @@ func (g *GormDb) GetDb() *gorm.DB {
 	return g.db
 }
 
-func NewGorm(p base.Params) *GormDb {
+func NewGorm(
+	l *log.ConsoleLogger,
+	c *config.GConfig,
+) *GormDb {
 	g := &GormDb{}
-	g.config = p.Config
-	g.log = p.Log
-	address := p.Config.Mysql.Address
-	username := p.Config.Mysql.Username
-	password := p.Config.Mysql.Password
-	database := p.Config.Mysql.Database
+	g.config = c
+	g.log = l
+	address := c.Mysql.Address
+	username := c.Mysql.Username
+	password := c.Mysql.Password
+	database := c.Mysql.Database
 	dns := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, address, database)
 	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
 	if err != nil {

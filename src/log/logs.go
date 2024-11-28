@@ -3,7 +3,6 @@ package log
 import (
 	"family-web-server/src/config"
 	"fmt"
-	"go.uber.org/fx"
 	"log"
 	"os"
 	"time"
@@ -22,16 +21,10 @@ const (
 	ErrorLevel        // 3
 )
 
-// Params 注入参数
-type Params struct {
-	fx.In
-	Config *config.GConfig
-}
-
 // NewConsoleLogger 创建并返回一个 ConsoleLogger 实例
-func NewConsoleLogger(p Params) *ConsoleLogger {
+func NewConsoleLogger(c *config.GConfig) *ConsoleLogger {
 	return &ConsoleLogger{
-		logLevel: p.Config.LogLevel,
+		logLevel: c.LogLevel,
 	}
 }
 
@@ -45,6 +38,7 @@ func (l *ConsoleLogger) log(level int, color, levelStr, message string) {
 		log.Println(logMessage)
 
 		// 打开或创建日志文件 (根目录下的log.txt)
+		os.Mkdir("./logs", os.ModePerm)
 		file, err := os.OpenFile(
 			fmt.Sprintf("./logs/%s.txt", time.Now().Format("2006-01-02")),
 			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)

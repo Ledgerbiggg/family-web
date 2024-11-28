@@ -4,7 +4,7 @@ import (
 	"errors"
 	"family-web-server/src/log"
 	"family-web-server/src/web/common"
-	"family-web-server/src/web/middleware/manager"
+	"family-web-server/src/web/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +13,7 @@ type ErrorMiddleware struct {
 }
 
 func NewErrorMiddleware(
-	mwm *manager.MiddlewareManager,
+	mwm *middlewares.MiddlewareManager,
 	l *log.ConsoleLogger,
 ) *ErrorMiddleware {
 	e := &ErrorMiddleware{}

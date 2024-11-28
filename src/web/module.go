@@ -3,10 +3,10 @@ package web
 import (
 	"family-web-server/src/config"
 	"family-web-server/src/log"
-	controllerManager "family-web-server/src/web/controllers/manager"
+	controllerManager "family-web-server/src/web/controllers"
 	controllerHandlers "family-web-server/src/web/controllers/v1"
-	middlewareHandlers "family-web-server/src/web/middleware/handlers"
-	middlewareManager "family-web-server/src/web/middleware/manager"
+	middlewareManager "family-web-server/src/web/middlewares"
+	middlewareHandlers "family-web-server/src/web/middlewares/handlers"
 	"family-web-server/src/web/services/impls"
 	"fmt"
 	"github.com/gin-gonic/gin"
