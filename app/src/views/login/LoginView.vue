@@ -2,6 +2,7 @@
 import {onMounted, ref} from "vue";
 import router from "@/router";
 import api from "@/services/api.ts";
+import {message} from "ant-design-vue";
 
 // 在组件挂载后执行刷新验证码
 onMounted(() => {
@@ -27,12 +28,17 @@ const user = ref<User>({
 
 // 登录方法
 const login = () => {
+  if (!user.value.username || !user.value.password || !user.value.captcha) {
+    message.warn("请填写完整信息");
+    return
+  }
   api.post("/login", {
     username: user.value.username,
     password: user.value.password,
     captcha: user.value.captcha
   }).then((res: any) => {
     // 跳转到主页
+    message.success("登录成功");
     router.push("/home");
   }).catch((err: any) => {
     refresh()

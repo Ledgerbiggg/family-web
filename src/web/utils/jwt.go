@@ -45,7 +45,7 @@ func GenerateToken(
 // ParseToken 解析 JWT Token
 func ParseToken(tokenString string, secretKey string) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (any, error) {
-		return secretKey, nil
+		return []byte(secretKey), nil
 	})
 
 	if err != nil || !token.Valid {

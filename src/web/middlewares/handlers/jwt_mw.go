@@ -44,6 +44,7 @@ func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 		claims, err := utils.ParseToken(tokenString, j.c.Jwt.SecretKey)
 		// Token 校验不通过
 		if err != nil {
+			j.l.Error("Token 校验失败:" + err.Error())
 			context.Error(common.UnauthorizedError)
 			return
 		}

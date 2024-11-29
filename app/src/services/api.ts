@@ -37,6 +37,7 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
     (response: AxiosResponse) => {
+
         if (response.status === 200 && response.data.code === '10000') {
             // 如果携带token
             if (response.headers.token) {
@@ -48,20 +49,21 @@ api.interceptors.response.use(
         if (response.status === 200 && response.data.code !== '10000') {
             message.warn(response.data.message)
         }
-
         return Promise.reject(new Error('Response status is not success'));
     },
     (error: AxiosError) => {
+        var showError: number | string = ''
         // 响应出错时的处理
         if (error.response) {
             // 服务器响应错误
             console.error('Response error status:', error.response.status);
-            console.error('Response error data:', error.response.data);
+            showError = error.response.status
         } else {
             // 请求没有发出去，或者没有响应
             console.error('Response error:', error.message);
+            showError = error.message
         }
-
+        message.error('请求失败 状态码: ' + showError);
         return Promise.reject(error); // 可以根据需要修改，返回不同的错误信息
     }
 );

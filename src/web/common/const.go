@@ -6,6 +6,8 @@ const (
 
 	CaptchaError = "20001" // 验证码错误
 	LoginFailed  = "20002" // 用户名或密码错误
+	UserIsExist  = "20003" // 用户名或密码错误
+	PhoneFormat  = "20004"
 
 	BadRequest       = "40000" // 请求不合法，参数缺失或无效
 	Unauthorized     = "40001" // 未授权访问，需要登录或验证
@@ -21,10 +23,13 @@ const (
 )
 
 var (
+	CaptchaGetError         = NewKnownError(CaptchaError, "请获取验证码")
 	CaptchaErrorError       = NewKnownError(CaptchaError, "验证码错误")
 	LoginErrorError         = NewKnownError(LoginFailed, "用户名或密码错误")
+	UserIsExistError        = NewKnownError(UserIsExist, "用户已存在")
+	PhoneFormatError        = NewKnownError(PhoneFormat, "手机号格式错误")
 	BadRequestError         = NewKnownError(BadRequest, "请求不合法，参数缺失或无效")
-	UnauthorizedError       = NewKnownError(Unauthorized, "未授权访问，需要登录或验证")
+	UnauthorizedError       = NewKnownError(Unauthorized, "无访问授权，需要登录或联系管理员新增权限")
 	ForbiddenError          = NewKnownError(Forbidden, "禁止访问，权限不足")
 	NotFoundError           = NewKnownError(NotFound, "请求的资源未找到")
 	MethodNotAllowedError   = NewKnownError(MethodNotAllowed, "不支持的请求方法")

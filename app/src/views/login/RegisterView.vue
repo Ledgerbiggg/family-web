@@ -2,6 +2,7 @@
 import {onMounted, ref} from "vue";
 import router from "@/router";
 import api from "@/services/api.ts";
+import {message} from "ant-design-vue";
 
 // 在组件挂载后执行刷新验证码
 onMounted(() => {
@@ -42,8 +43,19 @@ const backLogin = () => {
 
 // 注册方法
 const register = () => {
-  api.get("/register", {...user.value}).then((res: any) => {
-    console.log("red")
+  if (!user.value.username ||
+      !user.value.captcha ||
+      !user.value.password ||
+      !user.value.confirmPassword ||
+      user.value.password !==
+      user.value.confirmPassword) {
+    message.warn("请填写完整信息");
+    return
+  }
+  api.post("/register", {...user.value}).then((res: any) => {
+    // 跳转到登录
+    message.success("注册成功,请登录");
+    router.push("/login");
   }).catch((rea: any) => {
     refresh()
   })

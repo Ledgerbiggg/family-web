@@ -1,5 +1,6 @@
 // src/router/index.ts
 import {createRouter, createWebHistory} from 'vue-router'
+import {message} from "ant-design-vue";
 
 // 定义路由
 const routes = [
@@ -44,6 +45,7 @@ router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token')
     if (token) return next()
     // 如果token值不存在，跳转到登录页
+    message.warn("请先登录");
     next('/login')
 })
 

@@ -8,10 +8,9 @@ import (
 	"family-web-server/src/web/models/dto/login"
 	"family-web-server/src/web/services/interfaces"
 	"family-web-server/src/web/utils"
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/steambap/captcha"
-	"strings"
 )
 
 type LoginController struct {
@@ -52,7 +51,7 @@ func (c *LoginController) RegisterController() {
 
 // Captcha 生成验证码
 func (c *LoginController) Captcha(context *gin.Context) {
-	data, err := captcha.New(200, 100)
+	data, err := c.loginService.CaptchaService()
 	if err != nil {
 		c.l.Error("生成验证码失败:" + err.Error())
 		context.Error(common.SystemServerErrorError)
@@ -74,7 +73,7 @@ func (c *LoginController) Captcha(context *gin.Context) {
 	}
 }
 
-// Login 登录 TODO 不要在controller里面写业务逻辑
+// Login 登录
 func (c *LoginController) Login(context *gin.Context) {
 	var u = &login.UserDto{}
 	if err := context.ShouldBindJSON(u); err != nil {
@@ -87,15 +86,19 @@ func (c *LoginController) Login(context *gin.Context) {
 
 	// 获取 session 中保存的验证码答案
 	captchaVal := session.Get("captcha")
+	if captchaVal == nil {
+		context.Error(common.CaptchaGetError)
+		return
+	}
 	// 清除 session 中保存的验证码答案
 	session.Delete("captcha")
 	session.Save()
-	if captchaVal == nil || strings.ToLower(captchaVal.(string)) != strings.ToLower(u.Captcha) {
+	if err := c.loginService.ValidateCaptcha(captchaVal.(string), u.Captcha); err != nil {
 		c.l.Error("验证码错误")
 		context.Error(common.CaptchaErrorError)
 		return
 	}
-	b, r, ps, _ := c.loginService.Login(u)
+	b, r, ps, _ := c.loginService.LoginService(u)
 	if b {
 		// 查询用户的角色
 		token, err := utils.GenerateToken(u.Username, r, ps, c.c.ServiceName, c.c.Jwt.ExpireTime, c.c.Jwt.SecretKey)
@@ -109,11 +112,58 @@ func (c *LoginController) Login(context *gin.Context) {
 	} else {
 		context.Error(common.LoginErrorError)
 	}
-
 }
 
 // Register 注册
 func (c *LoginController) Register(context *gin.Context) {
+	var r = &login.RegisterDto{}
+	// 参数绑定
+	if err := context.ShouldBindJSON(r); err != nil {
+		c.l.Error("参数绑定失败:" + err.Error())
+		context.Error(common.BadRequestError)
+		return
+	}
+	// 获取 session 存储
+	session := sessions.Default(context)
+
+	// 获取 session 中保存的验证码答案
+	captchaVal := session.Get("captcha")
+	if captchaVal == nil {
+		context.Error(common.CaptchaGetError)
+		return
+	}
+	// 清除 session 中保存的验证码答案
+	session.Delete("captcha")
+	session.Save()
+	// 验证码校验
+	if err := c.loginService.ValidateCaptcha(captchaVal.(string), r.Captcha); err != nil {
+		c.l.Error(fmt.Sprintf("ValidateCaptcha错误:%s", err.Error()))
+		context.Error(common.CaptchaErrorError)
+		return
+	}
+
+	// 校验参数
+	if r.Password != r.ConfirmPassword {
+		c.l.Error("两次密码不一致")
+		context.Error(common.BadRequestError)
+		return
+	}
+
+	// 手机号格式校验
+	if err := c.loginService.ValidatePhone(r.Username); err != nil {
+		c.l.Error("手机号格式错误")
+		context.Error(common.PhoneFormatError)
+		return
+	}
+
+	// 注册用户
+	if err := c.loginService.RegisterService(r); err != nil {
+		c.l.Error("注册失败:" + err.Error())
+		context.Error(common.UserIsExistError)
+		return
+	}
+	context.JSON(200, common.NewSuccessResult(nil))
+
 }
 
 // Verify 找回密码
