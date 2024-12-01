@@ -29,29 +29,39 @@ func NewJwtMiddleware(
 
 func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		path := context.Request.URL.Path
+		path := strings.Replace(context.Request.URL.Path, "/"+j.c.ServerLevel, "", 1)
 		// 如果是/login 或者 /register 请求 或者 /verify，不需要验证 JWT
 		if path == "/captcha" ||
 			path == "/login" ||
 			path == "/register" ||
-			path == "/verify" {
+			path == "/verify" ||
+			path == "/invite-info" ||
+			path == "/invite-register" {
 			context.Next()
 			return
 		}
 		// 获取 Token
-		tokenString := strings.TrimPrefix(context.Request.Header.Get("Authorization"), "Bearer ")
+		tokenString := strings.TrimSpace(strings.TrimPrefix(context.Request.Header.Get("Authorization"), "Bearer"))
 		// 解析 Token
 		claims, err := utils.ParseToken(tokenString, j.c.Jwt.SecretKey)
 		// Token 校验不通过
 		if err != nil {
 			j.l.Error("Token 校验失败:" + err.Error())
 			context.Error(common.UnauthorizedError)
+			context.Abort()
 			return
 		}
 		// 获取用户的权限
 		username := claims.Username
 		role := claims.Role
 		permissions := claims.Permissions
+
+		// 如果是登出请求
+		if path == "/logout" {
+			// 直接进入路由
+			context.Next()
+			return
+		}
 
 		// 校验是否有权限进入路由
 		for i := range permissions {

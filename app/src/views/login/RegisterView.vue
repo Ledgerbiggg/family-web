@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import router from "@/router";
 import api from "@/services/api.ts";
 import {message} from "ant-design-vue";
+import {useRouter} from "vue-router";
 
+const router = useRouter()
 // 在组件挂载后执行刷新验证码
 onMounted(() => {
   refresh();
@@ -38,7 +39,7 @@ const refresh = () => {
 
 // 登录方法
 const backLogin = () => {
-  router.push("/login");
+  router.push({name: "Login"});
 }
 
 // 注册方法
@@ -98,5 +99,5 @@ const register = () => {
 </template>
 
 <style scoped>
-@import '../../styles/login.css';
+@import '@/styles/login.css';
 </style>

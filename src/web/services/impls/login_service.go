@@ -2,6 +2,7 @@ package impls
 
 import (
 	"crypto/md5"
+	"family-web-server/src/log"
 	"family-web-server/src/pkg/mysql"
 	"family-web-server/src/web/common"
 	dto "family-web-server/src/web/models/dto/login"
@@ -11,10 +12,131 @@ import (
 	"github.com/steambap/captcha"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type LoginService struct {
 	gorm *mysql.GormDb
+	l    *log.ConsoleLogger
+}
+
+func (l *LoginService) CheckInviteInfoIsValid(uuid string) (*entity.InviteLink, error) {
+	var link entity.InviteLink
+	l.gorm.GetDb().Where("uuid = ?", uuid).Find(&link)
+	if link.Uuid == "" {
+		return nil, common.NotFoundResourceError
+	}
+	// 判断是否被使用过
+	if link.IsUsed {
+		return nil, common.InviteLinkUsedError
+	}
+	// 判断邀请链接是否过期
+	if time.Now().After(link.ExpirationDate) {
+		return nil, common.NotFoundResourceError
+	}
+	return &link, nil
+}
+
+func (l *LoginService) InviteService(fromUsername string, inviteDto *dto.InviteDto) (uid string, err error) {
+	// 校验fromUsername的权限是否为管理员
+	isAdmin, err := l.gorm.IsAdmin(fromUsername)
+	if err != nil {
+		l.l.Error("获取用户权限失败:" + err.Error())
+		return "", common.DatabaseError
+	}
+	if !isAdmin {
+		l.l.Error("用户权限不足,不是管理员")
+		return "", common.AdminRoleError
+	}
+	// 用户是管理员 创建邀请链接
+	uuid := utils.GetRandomId(20)
+	link := entity.InviteLink{
+		Uuid:            uuid,
+		IsUsed:          false,
+		Description:     &inviteDto.Description,
+		InviterUsername: fromUsername,
+		InvitedRealName: inviteDto.RealName,
+		InvitedAdmin:    inviteDto.InvitedAdmin,
+		ExpirationDate:  time.Now().Add(time.Hour * 24),
+		CreatedAt:       time.Now(),
+	}
+	l.gorm.GetDb().Create(&link)
+	return uuid, nil
+}
+
+func (l *LoginService) InviteRegisterService(inviteRegisterDto *dto.InviteRegisterDto) error {
+	db := l.gorm.GetDb()
+	tx := db.Begin()
+	// 确保在出错时回滚事务
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback() // 如果发生任何panic，回滚事务
+		}
+	}()
+
+	uid := inviteRegisterDto.InviteUid
+	// 查询邀请链接
+	link, err := l.CheckInviteInfoIsValid(uid)
+	if err != nil {
+		return err
+	}
+	// 查询用户名是否一致
+	if link.InvitedRealName != inviteRegisterDto.RealName {
+		return common.InviteRegisterError
+	}
+	// 检查用户是否存在
+	var u entity.User
+	db.Where("username = ?", inviteRegisterDto.Username).Find(&u)
+	if u.Username != "" {
+		return common.UserIsExistError
+	}
+	// 标记邀请链接已被使用
+	link.IsUsed = true
+	now := time.Now()
+	link.UsedAt = &now
+	// 保存更新后的链接
+	if err = tx.Save(link).Error; err != nil {
+		tx.Rollback() // 出错时回滚事务
+		return err
+	}
+	// 修改密码为 md5 加密后的密码
+	u.Username = inviteRegisterDto.Username
+	u.Password = utils.Md5Encrypt("123456")
+	u.RealName = &inviteRegisterDto.RealName
+	u.RegisterTime = now
+	if link.InvitedAdmin {
+		u.RoleId = 2
+	}
+	// 存入用户
+	if err = tx.Save(&u).Error; err != nil {
+		tx.Rollback() // 出错时回滚事务
+		return err
+	}
+
+	// 提交事务
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback() // 提交失败时回滚事务
+		return err
+	}
+
+	return nil
+}
+
+func (l *LoginService) VerifyService(verifyDto *dto.VerifyDto) error {
+	var u entity.User
+	db := l.gorm.GetDb()
+	db.Where("username = ? and real_name = ?", verifyDto.Username, verifyDto.ReaName).Find(&u)
+	if u.Username == "" {
+		return common.RealNameNotMatchError
+	}
+	// 查看是否是管理员角色,不是的话返回错误
+	if u.RoleId != 1 && u.RoleId != 2 {
+		return common.AdminRoleError
+	}
+	// 修改密码为 md5 加密后的密码
+	u.Password = utils.Md5Encrypt("123456")
+	db.Save(&u)
+	return nil
 }
 
 func (l *LoginService) ValidatePhone(phone string) error {
@@ -30,10 +152,6 @@ func (l *LoginService) ValidatePhone(phone string) error {
 		return common.PhoneFormatError
 	}
 	return nil
-}
-
-func NewLoginService(gorm *mysql.GormDb) interfaces.ILoginService {
-	return &LoginService{gorm: gorm}
 }
 
 // RegisterService  注册用户
@@ -86,4 +204,10 @@ func (l *LoginService) LoginService(loginUser *dto.UserDto) (bool, *entity.Role,
 		WHERE u.username = ?`, loginUser.Username,
 	).Scan(&permissions)
 	return true, &role, permissions, nil
+}
+func NewLoginService(
+	gorm *mysql.GormDb,
+	l *log.ConsoleLogger,
+) interfaces.ILoginService {
+	return &LoginService{gorm: gorm, l: l}
 }

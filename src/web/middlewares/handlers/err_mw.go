@@ -27,9 +27,14 @@ func (r *ErrorMiddleware) Handle() gin.HandlerFunc {
 		c.Next()
 		// 捕获错误
 		var knownError *common.KnownError
-		if len(c.Errors) > 0 && errors.As(c.Errors[0], &knownError) {
-			r.l.Error(knownError.String())
-			c.JSON(200, knownError)
+		if len(c.Errors) > 0 {
+			if errors.As(c.Errors[0], &knownError) {
+				r.l.Error(knownError.String())
+				c.JSON(200, knownError)
+			} else {
+				r.l.Error(c.Errors[0].Error())
+				c.JSON(200, common.UnknownError)
+			}
 		}
 	}
 }

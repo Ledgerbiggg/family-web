@@ -9,6 +9,9 @@ address:
   ip: 10.147.18.26
   port: 8001
 
+# 服务等级
+serverLevel: v1
+
 # 注册中心redis
 redis:
   address: 10.147.18.26:6379

@@ -20,6 +20,26 @@ type GormDb struct {
 	ctx    context.Context
 }
 
+// IsAdmin 查询用户是否是管理员或者根用户
+func (g *GormDb) IsAdmin(username string) (bool, error) {
+	var exists bool
+	err := g.db.Raw(`
+    SELECT EXISTS (
+        SELECT 1
+        FROM user u
+        LEFT JOIN role r ON u.role_id = r.id
+        WHERE u.username = ? 
+          AND (r.name = 'admin' OR r.name = 'root')
+    )`, username).Scan(&exists).Error
+
+	if err != nil {
+		// 处理错误
+		return false, err
+	}
+	return exists, nil
+}
+
+// GetDb 获取db
 func (g *GormDb) GetDb() *gorm.DB {
 	return g.db
 }

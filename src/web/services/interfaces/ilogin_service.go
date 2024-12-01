@@ -11,10 +11,16 @@ type ILoginService interface {
 	CaptchaService() (*captcha.Data, error)
 	// ValidatePhone 校验手机号格式
 	ValidatePhone(phone string) error
-	// ValidateCaptcha 验证验证码
-	ValidateCaptcha(storedCaptcha, inputCaptcha string) error
 	// LoginService 查询数据库用户数据并比较密码
-	LoginService(registerDto *login.UserDto) (bool, *entity.Role, []*entity.Permission, error)
+	LoginService(*login.UserDto) (bool, *entity.Role, []*entity.Permission, error)
 	// RegisterService  注册
-	RegisterService(loginUser *login.RegisterDto) error
+	RegisterService(*login.RegisterDto) error
+	// VerifyService 找回密码
+	VerifyService(*login.VerifyDto) error
+	// InviteService 邀请一个成语进行注册,生成邀请码
+	InviteService(fromUsername string, inviteDto *login.InviteDto) (string, error)
+	// CheckInviteInfoIsValid 根据邀请的uuid获取邀请信息
+	CheckInviteInfoIsValid(uuid string) (*entity.InviteLink, error)
+	// InviteRegisterService 根据邀请码注册
+	InviteRegisterService(*login.InviteRegisterDto) error
 }

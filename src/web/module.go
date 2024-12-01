@@ -20,6 +20,7 @@ var Module = fx.Module("web",
 	fx.Invoke(middlewareHandlers.NewCorsMiddleware),    // 跨域中间件
 	fx.Invoke(middlewareHandlers.NewSessionMiddleware), // session中间件
 	fx.Invoke(middlewareHandlers.NewJwtMiddleware),     // jwt中间件
+	fx.Invoke(middlewareHandlers.NewCaptchaMiddleware), // 验证码中间件
 	// 注册控制器
 	fx.Provide(controllerManager.NewControllerManager), // 控制器管理者
 	fx.Invoke(controllerHandlers.NewController),        // 登录控制器
@@ -47,7 +48,9 @@ var Module = fx.Module("web",
 		for i := range cs {
 			controller := cs[i]
 			for j := range controller.GetRoutes() {
-				r.Handle(controller.GetRoutes()[j].Method, controller.GetRoutes()[j].Path, controller.GetRoutes()[j].Handle)
+				r.Handle(controller.GetRoutes()[j].Method,
+					"/"+c.ServerLevel+"/"+controller.GetRoutes()[j].Path,
+					controller.GetRoutes()[j].Handle)
 			}
 		}
 

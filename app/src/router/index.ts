@@ -22,6 +22,12 @@ const routes = [
         name: 'ForgotPassword',
         component: () => import('../views/login/ForgotPasswordView.vue')
     },
+    // 邀请注册
+    {
+        path: '/invite-register',
+        name: 'InviteRegister',
+        component: () => import('../views/login/InviteRegister.vue')
+    },
     // Home界面
     {
         path: '/home',

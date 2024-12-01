@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import router from "@/router";
 import api from "@/services/api.ts";
 import {message} from "ant-design-vue";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 // 在组件挂载后执行刷新验证码
 onMounted(() => {
@@ -33,7 +35,7 @@ const refresh = () => {
 }
 // 登录方法
 const backLogin = () => {
-  router.push("/login");
+  router.push({name: "Login"});
 }
 
 // 注册方法
@@ -43,7 +45,8 @@ const verify = () => {
     return
   }
   api.post("/verify", {...user.value}).then((res: any) => {
-    console.log("red")
+    message.success("验证成功,密码已重置为123456");
+    router.push({name: "Login"});
   }).catch((rea: any) => {
     refresh()
   })
@@ -71,6 +74,7 @@ const verify = () => {
         </div>
       </div>
     </div>
+    <div class="tips">提示: 验证成功之后的密码会重置为&nbsp;<strong>123456</strong></div>
     <div class="btn-box">
       <div>
         <button @click="backLogin">返回登录</button>
@@ -81,6 +85,16 @@ const verify = () => {
   </body>
 </template>
 
-<style scoped>
-@import '../../styles/login.css';
+<style scoped lang="less">
+@import '@/styles/login.css';
+
+.tips {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #999;
+
+  strong {
+    color: red;
+  }
+}
 </style>
