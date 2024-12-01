@@ -15,8 +15,9 @@ type GConfig struct {
 	LogLevel    int    `yaml:"logLevel"`
 	ServiceName string `yaml:"serviceName"`
 	Address     struct {
-		Ip   string `yaml:"ip"`
-		Port int    `yaml:"port"`
+		Domain string `yaml:"domain"`
+		Ip     string `yaml:"ip"`
+		Port   int    `yaml:"port"`
 	} `yaml:"address"`
 	ServerLevel string `yaml:"serverLevel"`
 	Redis       struct {

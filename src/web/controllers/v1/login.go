@@ -9,6 +9,7 @@ import (
 	"family-web-server/src/web/models/vo"
 	"family-web-server/src/web/services/interfaces"
 	"family-web-server/src/web/utils"
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -44,6 +45,7 @@ func (c *LoginController) GetRoutes() []*controllers.Route {
 		{Method: "POST", Path: "/verify", Handle: c.Verify},
 		{Method: "POST", Path: "/logout", Handle: c.Logout},
 		{Method: "POST", Path: "/invite", Handle: c.Invite},
+		{Method: "GET", Path: "/qr-code", Handle: c.QrCode},
 		{Method: "GET", Path: "/invite-info", Handle: c.InviteInfo},
 		{Method: "POST", Path: "/invite-register", Handle: c.InviteRegister},
 	}
@@ -194,6 +196,20 @@ func (c *LoginController) InviteInfo(context *gin.Context) {
 		return
 	}
 	context.JSON(200, common.NewSuccessResult(vo.NewInviteVo(info)))
+}
+
+// QrCode 获取二维码
+func (c *LoginController) QrCode(context *gin.Context) {
+	uid := context.Query("uid")
+	// 获取二维码
+	qrCode, err := utils.GenerateQRCode(fmt.Sprintf("http://%s/Invite-register?uid=%s", c.c.Address.Domain, uid), 100)
+	if err != nil {
+		c.l.Error("获取二维码失败:" + err.Error())
+		context.Error(err)
+		return
+	}
+	context.Header("Content-Type", "image/png")
+	context.Writer.Write(qrCode)
 }
 
 // InviteRegister 使用邀请链接去注册(直接成为管理员)
