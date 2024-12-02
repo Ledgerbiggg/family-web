@@ -30,9 +30,25 @@ const routes = [
     },
     // Home界面
     {
+        path: '/',
+        redirect: '/home'
+    },
+    {
         path: '/home',
         name: 'Home',
         component: () => import('../views/home/HomeView.vue')
+    },
+    // 404
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: () => import('../views/other/NotFoundView.vue')
+    },
+    // 404
+    {
+        path: '/test',
+        name: 'Test',
+        component: () => import('../views/other/TestView.vue')
     }
 ]
 

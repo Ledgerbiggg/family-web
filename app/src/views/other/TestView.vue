@@ -17,7 +17,6 @@ const swiperOptions =
         modifier: 2,
         slideShadows: true
       },// 如果需要前进后退按钮
-      loop: true, // 无限循环
       pagination: {
         el: '.swiper-pagination',
         clickable: true
@@ -109,14 +108,6 @@ const swiperOptions =
         </div>
       </SwiperSlide>
     </Swiper>
-    <!-- 分页器 -->
-    <div class="swiper-pagination"></div>
-
-    <!-- 前进按钮 -->
-    <div class="swiper-button-next"></div>
-
-    <!-- 后退按钮 -->
-    <div class="swiper-button-prev"></div>
   </div>
 </template>
 
