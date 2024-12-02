@@ -201,6 +201,22 @@ func (c *LoginController) InviteInfo(context *gin.Context) {
 // QrCode 获取二维码
 func (c *LoginController) QrCode(context *gin.Context) {
 	uid := context.Query("uid")
+	link, err := c.loginService.CheckInviteInfoIsValid(uid)
+	if err != nil {
+		c.l.Error("邀请uid错误:" + err.Error())
+		context.Error(err)
+		return
+	}
+	if link.Id == 0 {
+		c.l.Error("邀请链接不存在")
+		context.Error(common.InviteLinkNotFoundError)
+		return
+	}
+	if link.IsUsed {
+		c.l.Error("邀请链接已被使用")
+		context.Error(common.InviteLinkUsedError)
+		return
+	}
 	// 获取二维码
 	qrCode, err := utils.GenerateQRCode(fmt.Sprintf("http://%s/Invite-register?uid=%s", c.c.Address.Domain, uid), 100)
 	if err != nil {
