@@ -30,8 +30,8 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="container">
-    <img src="@/assets/404.png" class="bg" alt="404" />
-    <div class="countdown" style="background: #2d87f0">
+<!--    <img src="@/assets/404.png" class="bg" alt="404" />-->
+    <div class="countdown">
       <p>页面将在 <strong>{{ countdown }}</strong> 秒后跳转到主页面</p>
     </div>
   </div>
@@ -52,31 +52,27 @@ img {
 }
 
 .container {
+  background-image: url("@/assets/404.png");
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  max-width: 90%;
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top center;
   margin: 0 auto;
-  padding-top: 80px;
 }
 
-.bg {
-  display: block;
-  max-width: 100%;
-  margin: 0 auto;
-}
 
 .countdown {
   font-size: 18px;
   color: #fff;
-  background: linear-gradient(45deg, #ff7e5f, #feb47b); /* 背景渐变色 */
-  padding: 20px 40px;
   border-radius: 15px; /* 圆角 */
   display: inline-block;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 阴影效果 */
   font-weight: bold;
-  margin-top: 50px;
 }
 
 .countdown strong {

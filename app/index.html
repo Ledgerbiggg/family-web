@@ -11,32 +11,3 @@
 <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
-<!-- Swiper JS -->
-<script src="/src/js/swiper.min.js"></script>
-<!-- Initialize Swiper -->
-<script>
-    const swiper = new Swiper('.swiper-container',
-        {
-            effect: 'coverflow',
-            grabCursor: true,
-            centeredSlides: true,
-            slidesPerView: 3, // 同时显示 3 张卡片
-            coverflowEffect: {
-                rotate: 30, // 两侧卡片的旋转角度
-                stretch: 50, // 卡片之间的拉伸值
-                depth: 100, // 卡片的深度
-                modifier: 1, // 效果强度
-                slideShadows: true // 是否显示阴影
-            },
-            loop: true, // 无限循环
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev'
-            }
-        }
-    );
-</script>
