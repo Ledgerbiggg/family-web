@@ -32,7 +32,7 @@ func (l *LoginService) CheckInviteInfoIsValid(uuid string) (*entity.InviteLink, 
 	}
 	// 判断邀请链接是否过期
 	if time.Now().After(link.ExpirationDate) {
-		return nil, common.NotFoundResourceError
+		return nil, common.InviteRegisterExpiredError
 	}
 	return &link, nil
 }

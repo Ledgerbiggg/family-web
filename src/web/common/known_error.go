@@ -12,7 +12,7 @@ func NewKnownError(code string, message string) *KnownError {
 }
 
 func (k *KnownError) Error() string {
-	return k.Code
+	return k.String()
 }
 
 func (k *KnownError) String() string {

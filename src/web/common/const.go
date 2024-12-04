@@ -30,9 +30,11 @@ const (
 	InviteLinkUsedExpired = "50006" // 请求超时
 	InviteLinkNotFound    = "50007" // 请求超时
 	InviteRegister        = "50008" // 请求超时
+	InviteRegisterExpired = "50009" // 请求超时
 )
 
 var (
+	InviteRegisterExpiredError = NewKnownError(InviteRegisterExpired, "链接已过期")
 	InviteRegisterError        = NewKnownError(InviteRegister, "非被邀请用户不允许邀请注册")
 	CaptchaGetError            = NewKnownError(CaptchaError, "请获取验证码")
 	UnknownError               = NewKnownError(Unknown, "未知异常，请联系站长")
