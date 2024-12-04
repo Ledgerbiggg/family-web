@@ -64,7 +64,7 @@ CREATE TABLE `invite_link`
   DEFAULT CHARSET = utf8mb4 COMMENT ='邀请链接表';
 
 -- 主页的轮播图表信息
-CREATE TABLE `home_cards`
+CREATE TABLE `home_card`
 (
     `id`          INT AUTO_INCREMENT PRIMARY KEY COMMENT '主键',
     `title`       VARCHAR(255) NOT NULL COMMENT '卡片的标题',
@@ -72,11 +72,19 @@ CREATE TABLE `home_cards`
     `image`       VARCHAR(255) COMMENT '卡片的图片新',
     `path`        VARCHAR(255) NOT NULL COMMENT '卡片指向的路径',
     `created_at`  DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '卡片的创建时间',
-    `updated_at`  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '卡片的更新时间',
-    `user_id`     INT COMMENT '与此卡片关联的用户 ID'
+    `updated_at`  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '卡片的更新时间'
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='首页的卡片信息表';
 
+
+-- 角色卡片关联表(控制不同的角色访问不同的卡片n-n关系)
+CREATE TABLE `role_home_card_access`
+(
+    `id`           INT AUTO_INCREMENT PRIMARY KEY COMMENT '主键',
+    `role_id`      INT NOT NULL COMMENT '角色 ID',
+    `home_card_id` INT NOT NULL COMMENT '主页卡片 ID'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='角色与主页卡片访问关系表';
 
 
 

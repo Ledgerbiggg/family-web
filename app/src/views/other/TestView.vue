@@ -5,10 +5,30 @@ import {message} from "ant-design-vue";
 
 // Define the items and their details (this should match your image data and text)
 const items = ref([
-  { title: "相册", description: "拍下最美瞬间", image: new URL('@/assets/img/01.png', import.meta.url).href },
-  { title: "视频", description: "记录美好时刻", image: new URL('@/assets/img/02.png', import.meta.url).href },
-  { title: "日程", description: "别忘了那些纪念日", image: new URL('@/assets/img/03.png', import.meta.url).href },
-  { title: "微信Bot", description: "微信群的小助手", image: new URL('@/assets/img/04.png', import.meta.url).href }
+  {
+    title: "相册",
+    description: "拍下最美瞬间",
+    image: new URL('@/assets/img/01.png', import.meta.url).href,
+    path: '/album'
+  },
+  {
+    title: "视频",
+    description: "记录美好时刻",
+    image: new URL('@/assets/img/02.png', import.meta.url).href,
+    path: '/video'
+  },
+  {
+    title: "日程",
+    description: "别忘了那些纪念日",
+    image: new URL('@/assets/img/03.png', import.meta.url).href,
+    path: '/calendar'
+  },
+  {
+    title: "微信Bot",
+    description: "微信群的小助手",
+    image: new URL('@/assets/img/04.png', import.meta.url).href,
+    path: '/bot'
+  }
 ]);
 let interval: any = null;
 let currIndex = ref(0);

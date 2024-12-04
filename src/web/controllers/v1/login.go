@@ -6,7 +6,7 @@ import (
 	"family-web-server/src/web/common"
 	"family-web-server/src/web/controllers"
 	"family-web-server/src/web/models/dto/login"
-	"family-web-server/src/web/models/vo"
+	login2 "family-web-server/src/web/models/vo/login"
 	"family-web-server/src/web/services/interfaces"
 	"family-web-server/src/web/utils"
 	"fmt"
@@ -21,7 +21,7 @@ type LoginController struct {
 	loginService interfaces.ILoginService
 }
 
-func NewController(
+func NewLoginController(
 	cf *config.GConfig,
 	cm *controllers.ControllerManager,
 	l *log.ConsoleLogger,
@@ -195,7 +195,7 @@ func (c *LoginController) InviteInfo(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	context.JSON(200, common.NewSuccessResult(vo.NewInviteVo(info)))
+	context.JSON(200, common.NewSuccessResult(login2.NewInviteVo(info)))
 }
 
 // QrCode 获取二维码
