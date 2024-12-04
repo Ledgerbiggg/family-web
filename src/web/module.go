@@ -25,9 +25,11 @@ var Module = fx.Module("web",
 	fx.Provide(controllerManager.NewControllerManager), // 控制器管理者
 	fx.Invoke(controllerHandlers.NewLoginController),   // 登录控制器
 	fx.Invoke(controllerHandlers.NewHomeController),    // 主页控制器
+	fx.Invoke(controllerHandlers.NewInviteController),  // 邀请控制器
 	// 注册服务
-	fx.Provide(impls.NewLoginService), // 登录服务
-	fx.Provide(impls.NewHomeService),  // 登录服务
+	fx.Provide(impls.NewLoginService),  // 登录服务
+	fx.Provide(impls.NewHomeService),   // 登录服务
+	fx.Provide(impls.NewInviteService), // 邀请服务
 	fx.Invoke(func(
 		c *config.GConfig,
 		l *log.ConsoleLogger,

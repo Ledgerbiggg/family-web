@@ -2,20 +2,21 @@
 import {onMounted, ref} from 'vue';
 import Button from "@/components/Button.vue";
 import {message} from "ant-design-vue";
+import http from "@/services/api.ts";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 // Define the items and their details (this should match your image data and text)
 const items = ref([
-  {year: '相册', description: 'In the year 2014 I reached the age of 13'},
-  {year: '2015', description: 'In the year 2015 I reached the age of 14'},
-  {year: '2016', description: 'In the year 2016 I reached the age of 15'},
-  {year: '2017', description: 'In the year 2017 I reached the age of 16'},
-  {year: '2018', description: 'In the year 2018 I reached the age of 17'},
-  {year: '2019', description: 'In the year 2019 I reached the age of 18'},
-  {year: '2020', description: 'In the year 2020 I reached the age of 18'},
-  {year: '2021', description: 'In the year 2021 I reached the age of 19'},
-  {year: '2022', description: 'In the year 2022 I reached the age of 20'},
-  {year: '2023', description: 'In the year 2023 I reached the age of 21'},
-]);
+      {
+        title: "暂无",
+        description: "这边什么都没有哦",
+        image: new URL('@/assets/img/01.png', import.meta.url).href,
+        path: '/home'
+      },
+    ]
+);
 let interval: any = null;
 let currIndex = ref(0);
 let width = 0;
@@ -23,6 +24,7 @@ let height = 0;
 const intervalTime = 3000;
 
 const shellSlider = ref(null);
+const shellBox = ref(null);
 
 const itemWidth = ref(0);
 const itemHeight = ref(0);
@@ -30,7 +32,7 @@ const itemHeight = ref(0);
 // 根据窗口大小调整尺寸
 const resize = () => {
   width = Math.max(window.innerWidth * 0.2, 275);
-  height = window.innerHeight * 0.5;
+  height = Math.max(window.innerHeight * 0.5, 355);
   itemWidth.value = width;
   itemHeight.value = height;
 
@@ -49,9 +51,13 @@ const move = (index: number) => {
   const allItems = shellSlider.value?.children || [];
   Array.from(allItems).forEach((item: HTMLElement, i: number) => {
     const box = item.querySelector('.frame') as HTMLElement;
+    const front = box?.querySelector('.front') as HTMLElement;  // 获取 .front 元素
     if (i === index - 1) {
       item.classList.add('item--active');
       box.style.transform = 'perspective(1200px)';
+      if (front && shellBox.value) {
+        shellBox.value.style.backgroundImage = window.getComputedStyle(front).backgroundImage;
+      }
     } else {
       item.classList.remove('item--active');
       box.style.transform = `perspective(1200px) rotateY(${i < index - 1 ? 40 : -40}deg)`;
@@ -91,54 +97,75 @@ const clearIntervalFn = () => {
 
 // 展示当前的slide
 const showCurrentSlide = (c: number) => {
-  // 如果当前索引一致
-  if (currIndex.value === c) {
-    // 展示当前的详情
-    message.success("当前已经是第" + c + "张了");
-    return
-  }
   move(c);
   currIndex.value = c
 }
 
-onMounted(() => {
+// 进入对应的路由
+const toPath = (item: any) => {
+  router.push(item.path);
+}
+// 获取后台的数据
+const getCardData = () => {
+  http.get("/home/cards").then((res: any) => {
+    if (res) {
+      //image: new URL('@/assets/img/01.png', import.meta.url).href,
+      res.forEach((i: any) => {
+        i.image = new URL(`/src/assets/img/${i.image}`, import.meta.url).href;
+      });
+      items.value = res
+    }
+  }).finally(() => {
+    // 数据获取后执行这些操作
+    startAnimation()
+  })
+}
+// 开始动画效果
+const startAnimation = () => {
   resize();
-  move(Math.floor(items.value.length / 2));
+  move(1);
   window.addEventListener('resize', resize);
   timer();
+}
+
+onMounted(() => {
+  // 数据获取后执行这些操作
+  startAnimation()
+  getCardData()
 });
 </script>
 
 <template>
-  <div class="shell-box">
+  <div class="shell-box" ref="shellBox">
     <div class="shell">
       <div class="shell_body">
         <div class="button">
-          <div class="button">
-            <div class="button-left">
-              <Button @click="prev"></Button>
-            </div>
-            <div class="button-right">
-              <Button @click="next"></Button>
-            </div>
+          <div class="button-left">
+            <Button @click="prev"></Button>
+          </div>
+          <div class="button-right">
+            <Button @click="next"></Button>
           </div>
         </div>
-        <div class="shell_slider" ref="shellSlider" @mouseover="clearIntervalFn" @mouseleave="timer">
+        <div class="shell_slider" ref="shellSlider"
+             @mouseleave="timer"
+             @mouseenter="clearIntervalFn">
           <div
               class="item"
               v-for="(item, index) in items"
               :key="index"
               :style="{ width: itemWidth + 'px', height: itemHeight + 'px' }"
-              @click="showCurrentSlide(index+1)"
+              @mouseover="showCurrentSlide(index+1)"
+              @click="toPath(item)"
           >
             <!--卡片详情 -->
             <div class="frame">
-              <div class="box front">
-                <h1>{{ item.year }}</h1>
+              <div class="box front" :style="{ backgroundImage: 'url(' + (item.image) + ')' }">
+                <h1>{{ item.title }}</h1>
                 <span>{{ item.description }}</span>
               </div>
-              <div class="box left"></div>
-              <div class="box right"></div>
+              <div class="box left" :style="{ backgroundImage: 'url(' + (item.image) + ')' }"></div>
+              <div class="box right" :style="{ backgroundImage: 'url(' + (item.image) + ')' }"></div>
             </div>
           </div>
         </div>
@@ -287,7 +314,6 @@ onMounted(() => {
 
 /* 设置.front、.left和.right元素的盒阴影为0 0 50px #ffffff，背景图大小为cover */
 .front, .left, .right {
-  background-image: url("@/assets/home-bg.jpg");
   box-shadow: 0 0 50px #ffffff;
   background-size: cover;
 }

@@ -24,13 +24,17 @@ func (cm *CaptchaMiddleware) Handle() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		path := strings.Replace(context.Request.URL.Path, "/"+cm.c.ServerLevel, "", 1)
 		// 判断路由,如果是登录+注册+忘记密码+邀请注册，不需要验证码
-		if path == "/login" || path == "/register" || path == "/verify" || path == "/invite-register" {
+		if path == "/login" ||
+			path == "/Invite" ||
+			path == "/register" ||
+			path == "/verify" ||
+			path == "/invite-register" {
 			// 获取 session 存储
 			session := sessions.Default(context)
 			// 获取 session 中保存的验证码答案
 			captchaVal := session.Get("captcha")
 			if captchaVal == nil {
-				context.Error(common.CaptchaGetError)
+				context.Error(common.NewKnownError(common.CaptchaError, "验证码错误"))
 				context.Abort()
 				return
 			}

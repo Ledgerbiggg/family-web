@@ -1,5 +1,6 @@
 import axios, {AxiosResponse, AxiosError, InternalAxiosRequestConfig, AxiosHeaders} from 'axios';
 import {message} from "ant-design-vue";
+import router from "../router";
 
 // 创建 Axios 实例
 const api = axios.create({
@@ -37,7 +38,6 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
     (response: AxiosResponse) => {
-
         if (response.status === 200 && response.data.code === '10000') {
             // 如果携带token
             if (response.headers.token) {
@@ -48,6 +48,10 @@ api.interceptors.response.use(
         }
         if (response.status === 200 && response.data.code !== '10000') {
             message.warn(response.data.message)
+            // 登录过期需要重新登录
+            if (response.data.code === '20008') {
+                router.push({name: 'Login'})
+            }
         }
         return Promise.reject(new Error('Response status is not success'));
     },

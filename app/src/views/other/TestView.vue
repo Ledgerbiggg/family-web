@@ -2,34 +2,21 @@
 import {onMounted, ref} from 'vue';
 import Button from "@/components/Button.vue";
 import {message} from "ant-design-vue";
+import http from "@/services/api.ts";
+import {useRouter} from "vue-router";
+
+const router = useRouter()
 
 // Define the items and their details (this should match your image data and text)
 const items = ref([
-  {
-    title: "相册",
-    description: "拍下最美瞬间",
-    image: new URL('@/assets/img/01.png', import.meta.url).href,
-    path: '/album'
-  },
-  {
-    title: "视频",
-    description: "记录美好时刻",
-    image: new URL('@/assets/img/02.png', import.meta.url).href,
-    path: '/video'
-  },
-  {
-    title: "日程",
-    description: "别忘了那些纪念日",
-    image: new URL('@/assets/img/03.png', import.meta.url).href,
-    path: '/calendar'
-  },
-  {
-    title: "微信Bot",
-    description: "微信群的小助手",
-    image: new URL('@/assets/img/04.png', import.meta.url).href,
-    path: '/bot'
-  }
-]);
+      {
+        title: "暂无",
+        description: "这边什么都没有哦",
+        image: new URL('@/assets/img/01.png', import.meta.url).href,
+        path: '/home'
+      },
+    ]
+);
 let interval: any = null;
 let currIndex = ref(0);
 let width = 0;
@@ -110,21 +97,41 @@ const clearIntervalFn = () => {
 
 // 展示当前的slide
 const showCurrentSlide = (c: number) => {
-  // 如果当前索引一致
-  if (currIndex.value === c) {
-    // 展示当前的详情
-    message.success("当前已经是第" + c + "张了");
-    return
-  }
   move(c);
   currIndex.value = c
 }
 
-onMounted(() => {
+// 进入对应的路由
+const toPath = (item: any) => {
+  router.push(item.path);
+}
+// 获取后台的数据
+const getCardData = () => {
+  http.get("/home/cards").then((res: any) => {
+    if (res) {
+      //image: new URL('@/assets/img/01.png', import.meta.url).href,
+      res.forEach((i: any) => {
+        i.image = new URL(`/src/assets/img/${i.image}`, import.meta.url).href;
+      });
+      items.value = res
+    }
+  }).finally(() => {
+    // 数据获取后执行这些操作
+    startAnimation()
+  })
+}
+// 开始动画效果
+const startAnimation = () => {
   resize();
   move(1);
   window.addEventListener('resize', resize);
   timer();
+}
+
+onMounted(() => {
+  // 数据获取后执行这些操作
+  startAnimation()
+  getCardData()
 });
 </script>
 
@@ -133,24 +140,23 @@ onMounted(() => {
     <div class="shell">
       <div class="shell_body">
         <div class="button">
-          <div class="button">
-            <div class="button-left">
-              <Button @click="prev"></Button>
-            </div>
-            <div class="button-right">
-              <Button @click="next"></Button>
-            </div>
+          <div class="button-left">
+            <Button @click="prev"></Button>
+          </div>
+          <div class="button-right">
+            <Button @click="next"></Button>
           </div>
         </div>
         <div class="shell_slider" ref="shellSlider"
              @mouseleave="timer"
-             @mouseover="clearIntervalFn">
+             @mouseenter="clearIntervalFn">
           <div
               class="item"
               v-for="(item, index) in items"
               :key="index"
               :style="{ width: itemWidth + 'px', height: itemHeight + 'px' }"
-              @click="showCurrentSlide(index+1)"
+              @mouseover="showCurrentSlide(index+1)"
+              @click="toPath(item)"
           >
             <!--卡片详情 -->
             <div class="frame">
@@ -308,7 +314,6 @@ onMounted(() => {
 
 /* 设置.front、.left和.right元素的盒阴影为0 0 50px #ffffff，背景图大小为cover */
 .front, .left, .right {
-  //background: url("@/assets/home-bg.jpg");
   box-shadow: 0 0 50px #ffffff;
   background-size: cover;
 }

@@ -1,6 +1,8 @@
-package login
+package Invite
 
-import entity "family-web-server/src/web/models/eneity/login"
+import (
+	entity "family-web-server/src/web/models/eneity/invite"
+)
 
 type InviteVo struct {
 	Id              int     `json:"id"`              // 主键

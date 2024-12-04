@@ -36,7 +36,12 @@ const routes = [
     {
         path: '/home',
         name: 'Home',
-        component: () => import('../views/home/HomeView.vue')
+        component: () => import('../views/HomeView.vue')
+    },
+    {
+        path: '/album',
+        name: 'Album',
+        component: () => import('../views/home/AlbumView.vue')
     },
     // 404
     {
@@ -44,7 +49,7 @@ const routes = [
         name: 'NotFound',
         component: () => import('../views/other/NotFoundView.vue')
     },
-    // 404
+    // test
     {
         path: '/test',
         name: 'Test',

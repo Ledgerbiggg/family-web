@@ -30,13 +30,13 @@ func NewJwtMiddleware(
 func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		path := strings.Replace(context.Request.URL.Path, "/"+j.c.ServerLevel, "", 1)
-		// 如果是/login 或者 /register 请求 或者 /verify，不需要验证 JWT
+		// 如果是/Invite 或者 /register 请求 或者 /verify，不需要验证 JWT
 		if path == "/captcha" ||
 			path == "/login" ||
 			path == "/register" ||
 			path == "/verify" ||
-			path == "/invite-info" ||
-			path == "/invite-register" {
+			path == "/invite/info" ||
+			path == "/invite/register" {
 			context.Next()
 			return
 		}
@@ -47,7 +47,7 @@ func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 		// Token 校验不通过
 		if err != nil {
 			j.l.Error("Token 校验失败:" + err.Error())
-			context.Error(common.UnauthorizedError)
+			context.Error(common.LoginExpiredError)
 			context.Abort()
 			return
 		}
@@ -88,9 +88,11 @@ func (j *JwtMiddleware) Order() int {
 func (j *JwtMiddleware) matchPath(path string, permissionPath string) bool {
 	// 如果权限路径包含通配符
 	if strings.Contains(permissionPath, "*") {
-		// 判断是否以指定路径开头
+		// 获取通配符前的路径部分（即 `prefix`），假设是以 * 结尾
 		prefix := strings.Split(permissionPath, "*")[0]
-		return strings.HasPrefix(path, prefix)
+
+		// 检查路径是否以该前缀开头，且允许完全等于该前缀（即匹配 /a 和 /a/xxx 都符合）
+		return strings.HasPrefix(path, prefix) || path+"/" == prefix || path == prefix
 	}
 	// 完全匹配
 	return path == permissionPath

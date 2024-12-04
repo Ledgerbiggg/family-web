@@ -35,7 +35,7 @@ func NewHomeController(
 
 func (h *HomeController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
-		{Method: "GET", Path: "/home", Handle: h.test},
+		{Method: "GET", Path: "/home/cards", Handle: h.cards},
 	}
 }
 
@@ -43,7 +43,7 @@ func (h *HomeController) RegisterController() {
 	h.cm.AddController(h)
 }
 
-func (h *HomeController) test(context *gin.Context) {
+func (h *HomeController) cards(context *gin.Context) {
 	value, exists := context.Get("role")
 	if exists {
 		role := value.(*login.Role)
