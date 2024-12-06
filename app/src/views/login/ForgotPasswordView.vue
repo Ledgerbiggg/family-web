@@ -68,7 +68,7 @@ const verify = () => {
     <div class="input-box captcha-input-box">
       <label>验证码</label>
       <div class="captcha-box">
-        <input v-model="user.captcha" type="text"/>
+        <input v-model="user.captcha" type="text" @keydown.enter="verify"/>
         <div class="img-box">
           <img ref="captchaImage" @click="refresh" src="" alt="captcha">
         </div>

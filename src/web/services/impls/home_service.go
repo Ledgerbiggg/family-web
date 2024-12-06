@@ -29,7 +29,8 @@ func (h *HomeService) GetHomeCardData(role *login.Role) []*homeVo.HomeCardVo {
 			FROM role r
 					 LEFT JOIN role_home_card_access rhca ON r.id = rhca.role_id
 					 LEFT JOIN home_card hc ON rhca.home_card_id = hc.id
-			WHERE r.id = ?;
+			WHERE r.id = ?
+		ORDER BY hc.sort
 		`, role.Id).Scan(&homeCards)
 	var homeCardVos []*homeVo.HomeCardVo
 	for i := range homeCards {

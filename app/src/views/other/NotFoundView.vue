@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import {useRouter} from "vue-router";
+import {ref, onMounted, onBeforeUnmount} from "vue";
 
 const router = useRouter();
 
 // 倒计时剩余时间
 const countdown = ref(5);
 
+// 定义一个变量来存储定时器 ID
+let interval: number | null = null;
+
 // 创建一个函数来处理倒计时
 const startCountdown = () => {
-  const interval = setInterval(() => {
+  interval = setInterval(() => {
     countdown.value--; // 每秒减少1
     if (countdown.value <= 0) {
-      clearInterval(interval); // 倒计时结束，清除定时器
-      router.push({ name: "Home" }); // 跳转到登录页面
+      clearInterval(interval as number); // 倒计时结束，清除定时器
+      router.push({name: "Home"}); // 跳转到登录页面
     }
   }, 1000);
 };
@@ -24,13 +27,16 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   // 在组件销毁时清除定时器
-  clearInterval(startCountdown);
+  if (interval) {
+    clearInterval(interval); // 清除定时器
+  }
 });
 </script>
 
+
 <template>
   <div class="container">
-<!--    <img src="@/assets/404.png" class="bg" alt="404" />-->
+    <!--    <img src="@/assets/404.png" class="bg" alt="404" />-->
     <div class="countdown">
       <p>页面将在 <strong>{{ countdown }}</strong> 秒后跳转到主页面</p>
     </div>
@@ -38,6 +44,7 @@ onBeforeUnmount(() => {
 </template>
 <style scoped>
 @import "@/styles/button.css";
+
 * {
   padding: 0;
   margin: 0;

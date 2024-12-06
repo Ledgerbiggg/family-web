@@ -1,4 +1,4 @@
-package handlers
+package test5
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestJwtMiddleware_matchPath(t *testing.T) {
-	path := matchPath("/a", "/a/*")
+	path := matchPath("/*", "/album/photos")
 	t.Log(path)
 }
 func matchPath(path string, permissionPath string) bool {

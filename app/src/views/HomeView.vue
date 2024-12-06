@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
 import Button from "@/components/Button.vue";
-import {message} from "ant-design-vue";
-import http from "@/services/api.js";
+import http from "@/services/api.ts";
 import {useRouter} from "vue-router";
 
 const router = useRouter()
@@ -52,11 +51,13 @@ const move = (index: number) => {
   Array.from(allItems).forEach((item: HTMLElement, i: number) => {
     const box = item.querySelector('.frame') as HTMLElement;
     const front = box?.querySelector('.front') as HTMLElement;  // 获取 .front 元素
+    const back = box?.querySelector('.back') as HTMLElement;  // 获取 .front 元素
     if (i === index - 1) {
       item.classList.add('item--active');
       box.style.transform = 'perspective(1200px)';
-      if (front && shellBox.value) {
+      if (front && shellBox.value && back) {
         shellBox.value.style.backgroundImage = window.getComputedStyle(front).backgroundImage;
+        shellBox.value.style.backgroundImage = window.getComputedStyle(back).backgroundImage;
       }
     } else {
       item.classList.remove('item--active');
@@ -127,6 +128,38 @@ const startAnimation = () => {
   window.addEventListener('resize', resize);
   timer();
 }
+const flipAndNavigate = (item: any) => {
+  // 找到当前点击的item
+  const currentItem = shellSlider.value?.children[currIndex.value - 1] as HTMLElement;
+  const box = currentItem?.querySelector('.frame') as HTMLElement;
+  const front = box?.querySelector('.front') as HTMLElement;
+
+  // 确保找到 .frame 元素后进行动画
+  if (box && front) {
+    // 1. 设置 box 翻转效果
+    box.style.transition = 'transform 1s'; // 翻转动画持续时间
+
+    // 2. 设置 front 翻开效果
+    front.style.transition = 'transform 1s'; // front 翻开动画持续时间
+    front.style.transformOrigin = 'left'; // 设置旋转中心在左边
+    front.style.transform = 'rotateY(-160deg)'; // 让 front 翻开（绕 Y 轴旋转 180 度）
+
+    // 2. 等待翻转动画完成后执行缩放动画
+    setTimeout(() => {
+      // 变大动画
+      box.style.transition = 'transform 1s, opacity 1s'; // 添加变大动画
+      box.style.transform = 'scale(5)'; // 缩放到2倍大
+      box.style.opacity = '0'; // 如果需要淡出，也可以设置透明度
+
+      // 3. 等待动画完成后跳转页面
+      setTimeout(() => {
+        toPath(item); // 页面跳转
+      }, 1000); // 变大动画时间为1s，确保在动画完成后跳转
+    }, 1000); // 翻转动画时间为1s，确保在翻转后开始缩放
+  }
+};
+
+
 
 onMounted(() => {
   // 数据获取后执行这些操作
@@ -150,17 +183,18 @@ onMounted(() => {
         <div class="shell_slider" ref="shellSlider"
              @mouseleave="timer"
              @mouseenter="clearIntervalFn">
-          <div
-              class="item"
-              v-for="(item, index) in items"
-              :key="index"
-              :style="{ width: itemWidth + 'px', height: itemHeight + 'px' }"
-              @mouseover="showCurrentSlide(index+1)"
-              @click="toPath(item)"
-          >
-            <!--卡片详情 -->
+          <div class="item"
+               v-for="(item, index) in items"
+               :key="index"
+               :style="{ width: itemWidth + 'px', height: itemHeight + 'px' }"
+               @mouseover="showCurrentSlide(index+1)"
+               @click="flipAndNavigate(item)">
             <div class="frame">
               <div class="box front" :style="{ backgroundImage: 'url(' + (item.image) + ')' }">
+                <h1>{{ item.title }}</h1>
+                <span>{{ item.description }}</span>
+              </div>
+              <div class="box back" :style="{ backgroundImage: 'url(' + (item.image) + ')' }">
                 <h1>{{ item.title }}</h1>
                 <span>{{ item.description }}</span>
               </div>
@@ -180,6 +214,7 @@ onMounted(() => {
   margin: 0;
   font-family: "Source Sans Pro", sans-serif;
 }
+
 
 /* 设置html和body元素为flex布局，水平和垂直居中对齐，高度为100vh，背景图大小为cover，溢出隐藏，背景图过渡动画时间为0.7秒 */
 .shell-box {
@@ -340,4 +375,5 @@ onMounted(() => {
   transform: translate3d(-1px, 0, -60px) rotateY(90deg);
   transform-origin: 100%;
 }
+
 </style>

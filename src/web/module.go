@@ -26,6 +26,7 @@ var Module = fx.Module("web",
 	fx.Invoke(controllerHandlers.NewLoginController),   // 登录控制器
 	fx.Invoke(controllerHandlers.NewHomeController),    // 主页控制器
 	fx.Invoke(controllerHandlers.NewInviteController),  // 邀请控制器
+	fx.Invoke(controllerHandlers.NewAlbumController),   // 相册控制器
 	// 注册服务
 	fx.Provide(impls.NewLoginService),  // 登录服务
 	fx.Provide(impls.NewHomeService),   // 登录服务
