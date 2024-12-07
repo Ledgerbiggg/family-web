@@ -55,8 +55,123 @@ SELECT ac.id,
        ac.created_by,
        ac.created_at,
        ac.updated_at,
-       CONCAT(ap.name,'.', ap.format) AS cover
+       CONCAT(ap.name, '.', ap.format) AS cover
 FROM album_category ac
          LEFT JOIN album_photo ap ON ac.cover = ap.id;
+
+
+# //	ID          int64   `json:"id"`          // 照片ID
+# 	//	Name        string  `json:"name"`        // 照片名称
+# 	//	Description *string `json:"description"` // 照片描述
+# 	//	Sort        int     `json:"sort"`        // 照片排序
+# 	//	IsLock      bool    `json:"isLock"`      // 是否锁定
+# 	//	Format      string  `json:"format"`      // 照片格式（如JPEG、PNG等）
+# 	//	CategoryID  int     `json:"categoryID"`  // 相册ID
+# 	//	UploadBy    int     `json:"uploadBy"`    // 上传用户
+# 	//	UploadTime  string  `json:"uploadTime"`  // 上传时间
+
+SELECT ap.id,
+       ap.name,
+       ap.description,
+       ap.sort,
+       ap.is_lock,
+       ap.format,
+       ap.category_id,
+       u.nickname,
+       ap.upload_time
+FROM album_photo ap
+         LEFT JOIN user u ON ap.upload_by = u.id
+WHERE ap.category_id = 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

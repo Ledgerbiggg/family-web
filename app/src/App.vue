@@ -1,6 +1,10 @@
 <template>
-  <div class="animation">
-    <router-view>
-    </router-view>
-  </div>
+  <router-view/>
 </template>
+
+<style scoped>
+* {
+  margin: 0;
+  padding: 0;
+}
+</style>

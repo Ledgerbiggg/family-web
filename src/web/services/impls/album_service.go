@@ -22,6 +22,28 @@ func NewAlbumService(
 	return &AlbumService{c: cf, gorm: gorm}
 }
 
+func (a *AlbumService) GetCategoryPhotos(category string) []*albumVo.PhotoVo {
+	var photoVos []*albumVo.PhotoVo
+	a.gorm.GetDb().Raw(`
+		SELECT ap.id,
+			   ap.name,
+			   ap.description,
+			   ap.sort,
+			   ap.is_lock,
+			   ap.format,
+			   ap.category_id,
+			   u.nickname,
+			   ap.upload_at
+		FROM album_photo ap
+				 LEFT JOIN user u ON ap.upload_by = u.id
+		WHERE ap.category_id = ?;
+	`, category).Find(&photoVos)
+	for i := range photoVos {
+		photoVos[i].UploadTime = photoVos[i].UploadAt.Format("2006-01-02 15:04:05")
+	}
+	return photoVos
+}
+
 func (a *AlbumService) GetCategoryList() []*albumVo.CategoryVo {
 	var categoryVos []*albumVo.CategoryVo
 	// 查询全部的相册分类+对应的封面
@@ -40,6 +62,11 @@ func (a *AlbumService) GetCategoryList() []*albumVo.CategoryVo {
 		FROM album_category ac
 				 LEFT JOIN album_photo ap ON ac.cover = ap.id;
 	`).Find(&categoryVos)
+	// 转换时间
+	for i := range categoryVos {
+		categoryVos[i].CreatedTime = categoryVos[i].CreatedAt.Format("2006-01-02 15:04:05")
+		categoryVos[i].UpdatedTime = categoryVos[i].UpdatedAt.Format("2006-01-02 15:04:05")
+	}
 	return categoryVos
 }
 

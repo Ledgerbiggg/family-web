@@ -38,10 +38,20 @@ const routes = [
         name: 'Home',
         component: () => import('../views/HomeView.vue')
     },
+    // 相册
     {
         path: '/album',
         name: 'Album',
-        component: () => import('../views/home/AlbumView.vue')
+        component: () => import('../views/home/album/CategoryView.vue'),
+        beforeEnter: (to: any, from: any, next: any) => {
+            checkFromHome(from, next); // 调用抽离的函数
+        },
+    },
+    // 照片
+    {
+        path: '/photo/:category',
+        name: 'Photo',
+        component: () => import('../views/home/album/PhotoView2.vue')
     },
     // 404
     {
@@ -58,6 +68,16 @@ const routes = [
 ]
 
 
+// src/utils/routerGuard.ts
+export const checkFromHome = (from: any, next: any): void => {
+    // 判断来源路径是否是 '/home'
+    if (from.path === '/home') {
+        next(); // 允许访问
+    } else {
+        next({name: 'Home'}); // 如果不是从 /home 进入，则重定向到首页
+    }
+};
+
 // 创建路由实例
 const router = createRouter({
     history: createWebHistory(), // 使用 HTML5 历史模式
@@ -67,7 +87,7 @@ const router = createRouter({
 
 // 路由守卫(放行登录+注册+忘记密码)
 router.beforeEach((to, from, next) => {
-    return  next()
+    return next()
 })
 
 

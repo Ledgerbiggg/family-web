@@ -26,17 +26,17 @@ func GenerateToken(
 ) (string, error) {
 	// 创建一个声明对象
 	claims := Claims{
-		UserId:      1,
+		UserId:      UserId,
 		Username:    username,
 		Role:        role,
 		Permissions: permissions,
 		StandardClaims: jwt.StandardClaims{
-			Audience:  serviceName,                                                  // 可以设定为服务名
-			ExpiresAt: time.Now().Add(time.Duration(expireTime) * time.Hour).Unix(), // 设置有效期为 24 小时
-			IssuedAt:  time.Now().Unix(),                                            // 当前时间作为签发时间
-			Issuer:    serviceName,                                                  // 设置签发人
-			NotBefore: time.Now().Unix(),                                            // 设置生效时间为当前时间
-			Subject:   username,                                                     // 这里可以设置为用户名，或者是其他的用户标识
+			Audience:  serviceName,                                                    // 可以设定为服务名
+			ExpiresAt: time.Now().Add(time.Duration(expireTime) * time.Minute).Unix(), // 设置有效期为 24 小时
+			IssuedAt:  time.Now().Unix(),                                              // 当前时间作为签发时间
+			Issuer:    serviceName,                                                    // 设置签发人
+			NotBefore: time.Now().Unix(),                                              // 设置生效时间为当前时间
+			Subject:   username,                                                       // 这里可以设置为用户名，或者是其他的用户标识
 		},
 	}
 	// 使用 HMAC 签名算法创建 JWT

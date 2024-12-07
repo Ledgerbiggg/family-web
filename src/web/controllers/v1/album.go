@@ -54,8 +54,12 @@ func (h *AlbumController) categories(context *gin.Context) {
 
 func (h *AlbumController) categoryPhotos(context *gin.Context) {
 	category := context.Param("category")
-	//todo 根据相册获取对应全部的照片
-	context.JSON(200, common.NewSuccessResult(category))
+	if category == "" {
+		h.l.Error("category is empty")
+		context.Error(common.BadRequestError)
+		return
+	}
+	context.JSON(200, common.NewSuccessResult(h.albumService.GetCategoryPhotos(category)))
 }
 
 func (h *AlbumController) photo(context *gin.Context) {

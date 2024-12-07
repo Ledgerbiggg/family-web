@@ -35,7 +35,7 @@ jwt:
   # 密钥
   secretKey: ledger
   # 有效期(单位:min)
-  expireTime: 99999
+  expireTime: 30
 
 static:
   # 静态文件目录

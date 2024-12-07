@@ -18,4 +18,12 @@ type IAlbumService interface {
 	//  @return error 错误
 	//
 	GetImageBytesByName(name string) ([]byte, error)
+
+	//
+	// GetCategoryPhotos
+	//  @Description: 根据分类名称获取照片
+	//  @param category 分类名称
+	//  @return []*album.PhotoVo 照片
+	//
+	GetCategoryPhotos(category string) []*album.PhotoVo
 }
