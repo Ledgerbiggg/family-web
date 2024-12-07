@@ -37,5 +37,8 @@ jwt:
   # 有效期(单位:min)
   expireTime: 99999
 
+static:
+  # 静态文件目录
+  dir: ./src/static/
 
 

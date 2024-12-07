@@ -35,6 +35,10 @@ func NewLoginController(
 	return c
 }
 
+func (c *LoginController) GetRoot() string {
+	return ""
+}
+
 func (c *LoginController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
 		{Method: "GET", Path: "/captcha", Handle: c.captcha},
@@ -82,9 +86,9 @@ func (c *LoginController) login(context *gin.Context) {
 		return
 	}
 	b, r, ps, _ := c.loginService.LoginService(u)
-	if b {
+	if b != 0 {
 		// 查询用户的角色
-		token, err := utils.GenerateToken(u.Username, r, ps, c.c.ServiceName, c.c.Jwt.ExpireTime, c.c.Jwt.SecretKey)
+		token, err := utils.GenerateToken(b, u.Username, r, ps, c.c.ServiceName, c.c.Jwt.ExpireTime, c.c.Jwt.SecretKey)
 		if err != nil {
 			c.l.Error("生成 token 失败:" + err.Error())
 			context.Error(common.SystemServerErrorError)

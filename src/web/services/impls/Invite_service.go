@@ -7,6 +7,7 @@ import (
 	dto "family-web-server/src/web/models/dto/login"
 	"family-web-server/src/web/models/eneity/invite"
 	entity "family-web-server/src/web/models/eneity/login"
+	invitePo "family-web-server/src/web/models/po/invite"
 	"family-web-server/src/web/services/interfaces"
 	"family-web-server/src/web/utils"
 	"time"
@@ -21,9 +22,25 @@ func NewInviteService(gorm *mysql.GormDb, l *log.ConsoleLogger) interfaces.IInvi
 	return &InviteService{gorm: gorm, l: l}
 }
 
-func (l *InviteService) CheckInviteInfoIsValid(uuid string) (*invite.InviteLink, error) {
-	var link invite.InviteLink
-	l.gorm.GetDb().Where("uuid = ?", uuid).Find(&link)
+func (l *InviteService) CheckInviteInfoIsValid(uuid string) (*invitePo.InviteLinkPo, error) {
+	var link invitePo.InviteLinkPo
+	l.gorm.GetDb().Raw(`
+			SELECT il.id                AS id,
+				   il.uuid              AS uuid,
+				   il.is_used           AS is_used,
+				   il.description       AS description,
+				   il.inviter_id        AS inviter_id,
+				   u.username           AS inviter_phone,
+				   u.real_name          AS inviter_real_name,
+				   il.invited_real_name AS invited_real_name,
+				   il.invited_admin     AS invited_admin,
+				   il.expiration_date   AS expiration_date,
+				   il.created_at        AS created_at,
+				   il.used_at           AS used_at
+			FROM invite_link il
+					 LEFT JOIN user u ON il.inviter_id = u.id
+			WHERE uuid = ?;
+		`, uuid).Scan(&link)
 	if link.Uuid == "" {
 		return nil, common.NotFoundResourceError
 	}
@@ -38,9 +55,9 @@ func (l *InviteService) CheckInviteInfoIsValid(uuid string) (*invite.InviteLink,
 	return &link, nil
 }
 
-func (l *InviteService) InviteService(fromUsername string, inviteDto *dto.InviteDto) (uid string, err error) {
+func (l *InviteService) InviteService(fromUserId int, inviteDto *dto.InviteDto) (uid string, err error) {
 	// 校验fromUsername的权限是否为管理员
-	isAdmin, err := l.gorm.IsAdmin(fromUsername)
+	isAdmin, err := l.gorm.IsAdmin(fromUserId)
 	if err != nil {
 		l.l.Error("获取用户权限失败:" + err.Error())
 		return "", common.DatabaseError
@@ -55,7 +72,7 @@ func (l *InviteService) InviteService(fromUsername string, inviteDto *dto.Invite
 		Uuid:            uuid,
 		IsUsed:          false,
 		Description:     &inviteDto.Description,
-		InviterUsername: fromUsername,
+		InviterId:       fromUserId,
 		InvitedRealName: inviteDto.RealName,
 		InvitedAdmin:    inviteDto.InvitedAdmin,
 		ExpirationDate:  time.Now().Add(time.Hour * 24),

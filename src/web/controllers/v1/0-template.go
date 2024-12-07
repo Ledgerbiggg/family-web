@@ -4,31 +4,30 @@ import (
 	"family-web-server/src/config"
 	"family-web-server/src/log"
 	"family-web-server/src/web/controllers"
-	"family-web-server/src/web/services/interfaces"
 	"github.com/gin-gonic/gin"
 )
 
 type TempController struct {
-	c           *config.GConfig
-	cm          *controllers.ControllerManager
-	l           *log.ConsoleLogger
-	homeService interfaces.IHomeService
+	c  *config.GConfig
+	cm *controllers.ControllerManager
+	l  *log.ConsoleLogger
 }
 
 func NewTempController(
 	cf *config.GConfig,
 	cm *controllers.ControllerManager,
 	l *log.ConsoleLogger,
-	ls interfaces.IHomeService,
 ) *TempController {
 	c := &TempController{
-		c:           cf,
-		cm:          cm,
-		l:           l,
-		homeService: ls,
+		c:  cf,
+		cm: cm,
+		l:  l,
 	}
 	c.RegisterController()
 	return c
+}
+func (h *TempController) GetRoot() string {
+	return ""
 }
 
 func (h *TempController) GetRoutes() []*controllers.Route {

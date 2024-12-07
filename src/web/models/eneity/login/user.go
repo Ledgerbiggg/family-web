@@ -7,7 +7,7 @@ type User struct {
 	Username      string     `gorm:"comment:'用户名(手机号)'"`
 	Password      string     `gorm:"comment:'密码'"`
 	Nickname      *string    `gorm:"comment:'昵称'"`
-	IsDisabled    *bool      `gorm:"default:false;comment:'是否被禁用，默认启用'"`
+	IsDisabled    *bool      `gorm:"comment:'是否被禁用，默认启用'"`
 	RegisterTime  time.Time  `gorm:"comment:'注册时间'"`
 	LastLoginTime *time.Time `gorm:"comment:'最后登录时间'"`
 	RealName      *string    `gorm:"comment:'真实姓名'"`

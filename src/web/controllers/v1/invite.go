@@ -21,19 +21,6 @@ type InviteController struct {
 	inviteService interfaces.IInviteService
 }
 
-func (ic *InviteController) GetRoutes() []*controllers.Route {
-	return []*controllers.Route{
-		{Method: "POST", Path: "/invite/get-link", Handle: ic.invite},
-		{Method: "GET", Path: "/invite/qr-code", Handle: ic.qrCode},
-		{Method: "GET", Path: "/invite/info", Handle: ic.inviteInfo},
-		{Method: "POST", Path: "/invite/register", Handle: ic.inviteRegister},
-	}
-}
-
-func (ic *InviteController) RegisterController() {
-	ic.cm.AddController(ic)
-}
-
 func NewInviteController(
 	c *config.GConfig,
 	cm *controllers.ControllerManager,
@@ -52,8 +39,21 @@ func NewInviteController(
 	return i
 }
 
+func (ic *InviteController) GetRoot() string {
+	return "/invite"
+}
+
+func (ic *InviteController) GetRoutes() []*controllers.Route {
+	return []*controllers.Route{
+		{Method: "POST", Path: "/get-link", Handle: ic.getInviteLink},
+		{Method: "GET", Path: "/qr-code", Handle: ic.qrCode},
+		{Method: "GET", Path: "/info", Handle: ic.inviteInfo},
+		{Method: "POST", Path: "/register", Handle: ic.inviteRegister},
+	}
+}
+
 // Invite 邀请注册
-func (ic *InviteController) invite(context *gin.Context) {
+func (ic *InviteController) getInviteLink(context *gin.Context) {
 	// 校验参数
 	var i = &login.InviteDto{}
 	if err := context.ShouldBindJSON(i); err != nil {
@@ -61,8 +61,8 @@ func (ic *InviteController) invite(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	// 获取当前用户名称
-	uid, err := ic.inviteService.InviteService(context.GetString("username"), i)
+	// 获取当前用户ID
+	uid, err := ic.inviteService.InviteService(context.GetInt("userId"), i)
 	if err != nil {
 		ic.l.Error("邀请失败:" + err.Error())
 		context.Error(err)
@@ -145,4 +145,7 @@ func (ic *InviteController) inviteRegister(context *gin.Context) {
 	}
 
 	context.JSON(200, common.NewSuccessResult(nil))
+}
+func (ic *InviteController) RegisterController() {
+	ic.cm.AddController(ic)
 }

@@ -1,7 +1,7 @@
 package login
 
 type Permission struct {
-	Id          int     `gorm:"primary_key;auto_increment;comment:'主键'"`
+	Id          int     `gorm:"primary_key;comment:'主键'"`
 	Path        string  `gorm:"comment:'权限路径'"`
 	Description *string `gorm:"comment:'权限描述'"`
 }

@@ -30,7 +30,7 @@ type ILoginService interface {
 	//  @return []*entity.Permission 权限
 	//  @return error 错误
 	//
-	LoginService(*login.UserDto) (bool, *entity.Role, []*entity.Permission, error)
+	LoginService(*login.UserDto) (int, *entity.Role, []*entity.Permission, error)
 	//
 	// RegisterService
 	//  @Description: 注册服务

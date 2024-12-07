@@ -20,7 +20,7 @@ CREATE TABLE invite_link
     uuid              varchar(255)                       NOT NULL COMMENT '邀请链接的唯一标识',
     is_used           tinyint(1)                         NOT NULL COMMENT '链接是否已经使用',
     description       text                               NULL COMMENT '邀请链接描述',
-    inviter_username  varchar(50)                        NOT NULL COMMENT '邀请人手机号',
+    inviter_id        int                                NOT NULL COMMENT '邀请人id',
     invited_real_name varchar(100)                       NOT NULL COMMENT '被邀请人真实姓名',
     invited_admin     tinyint(1)                         NOT NULL COMMENT '被邀请人角色是否是admin',
     expiration_date   datetime                           NOT NULL COMMENT '邀请链接过期时间',
@@ -90,3 +90,34 @@ CREATE TABLE user
 )
     COMMENT '用户表';
 
+-- auto-generated definition
+CREATE TABLE album_category
+(
+    id          INT AUTO_INCREMENT COMMENT '自增主键' PRIMARY KEY,
+    name        VARCHAR(255)                            NOT NULL COMMENT '分类名称',
+    cover       INT                                     NOT NULL COMMENT '封面图片ID',
+    description TEXT                                    NULL COMMENT '分类描述',
+    enabled     TINYINT(1) DEFAULT 1                    NOT NULL COMMENT '是否启用',
+    sort        INT        DEFAULT 0                    NOT NULL COMMENT '排序字段',
+    view_count  INT        DEFAULT 0                    NOT NULL COMMENT '视图计数',
+    status      ENUM ('active', 'inactive', 'archived') NOT NULL COMMENT '分类状态（active: 启用, inactive: 禁用, archived: 归档）',
+    created_by  INT                                     NOT NULL COMMENT '创建者ID',
+    created_at  TIMESTAMP  DEFAULT CURRENT_TIMESTAMP    NULL COMMENT '创建时间',
+    updated_at  TIMESTAMP                               NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) COMMENT '相册分类表';
+
+-- auto-generated definition
+CREATE TABLE album_photo
+(
+    id          bigint AUTO_INCREMENT COMMENT '照片ID'
+        PRIMARY KEY,
+    name        varchar(255)                         NOT NULL COMMENT '照片名称',
+    description text                                 NULL COMMENT '照片描述',
+    sort        int        DEFAULT 0                 NULL COMMENT '排序',
+    is_lock     tinyint(1) DEFAULT 0                 NULL COMMENT '是否锁定',
+    format      varchar(10)                          NOT NULL COMMENT '照片格式',
+    category_id int                                  NOT NULL COMMENT '相册ID',
+    upload_by   int                                  NOT NULL COMMENT '上传用户',
+    upload_time datetime   DEFAULT CURRENT_TIMESTAMP NULL COMMENT '上传时间'
+)
+    COMMENT '相册照片表';

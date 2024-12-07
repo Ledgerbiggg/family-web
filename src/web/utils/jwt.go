@@ -8,6 +8,7 @@ import (
 
 // Claims JWT 结构体
 type Claims struct {
+	UserId      int
 	Username    string
 	Role        *login.Role
 	Permissions []*login.Permission
@@ -15,6 +16,7 @@ type Claims struct {
 }
 
 func GenerateToken(
+	UserId int,
 	username string,
 	role *login.Role,
 	permissions []*login.Permission,
@@ -24,6 +26,7 @@ func GenerateToken(
 ) (string, error) {
 	// 创建一个声明对象
 	claims := Claims{
+		UserId:      1,
 		Username:    username,
 		Role:        role,
 		Permissions: permissions,

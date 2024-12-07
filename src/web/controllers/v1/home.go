@@ -33,9 +33,13 @@ func NewHomeController(
 	return c
 }
 
+func (h *HomeController) GetRoot() string {
+	return "/home"
+}
+
 func (h *HomeController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
-		{Method: "GET", Path: "/home/cards", Handle: h.cards},
+		{Method: "GET", Path: "/cards", Handle: h.cards},
 	}
 }
 

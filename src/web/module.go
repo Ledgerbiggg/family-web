@@ -31,6 +31,7 @@ var Module = fx.Module("web",
 	fx.Provide(impls.NewLoginService),  // 登录服务
 	fx.Provide(impls.NewHomeService),   // 登录服务
 	fx.Provide(impls.NewInviteService), // 邀请服务
+	fx.Provide(impls.NewAlbumService),  // 邀请服务
 	fx.Invoke(func(
 		c *config.GConfig,
 		l *log.ConsoleLogger,
@@ -53,9 +54,13 @@ var Module = fx.Module("web",
 		for i := range cs {
 			controller := cs[i]
 			for j := range controller.GetRoutes() {
+				// 使用路由版本号+控制器主路由+控制器子路由拼接
 				r.Handle(controller.GetRoutes()[j].Method,
-					"/"+c.ServerLevel+"/"+controller.GetRoutes()[j].Path,
-					controller.GetRoutes()[j].Handle)
+					"/"+c.ServerLevel+"/"+
+						controller.GetRoot()+
+						controller.GetRoutes()[j].Path,
+					controller.GetRoutes()[j].Handle,
+				)
 			}
 		}
 

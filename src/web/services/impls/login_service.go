@@ -80,14 +80,14 @@ func (l *LoginService) CaptchaService() (*captcha.Data, error) {
 }
 
 // LoginService  查询数据库用户数据并比较密码
-func (l *LoginService) LoginService(loginUser *dto.UserDto) (bool, *entity.Role, []*entity.Permission, error) {
+func (l *LoginService) LoginService(loginUser *dto.UserDto) (int, *entity.Role, []*entity.Permission, error) {
 	var user1 entity.User
 	var role entity.Role
 	var permissions []*entity.Permission
 	l.gorm.GetDb().Where("username = ?", loginUser.Username).Find(&user1)
 	md5.New().Sum([]byte(loginUser.Password))
 	if user1.Password != utils.Md5Encrypt(loginUser.Password) {
-		return false, nil, permissions, common.LoginErrorError
+		return 0, nil, permissions, common.LoginErrorError
 	}
 	// 查询用户角色+用户权限
 	l.gorm.GetDb().Where("id = ?", user1.RoleId).Find(&role)
@@ -100,7 +100,7 @@ func (l *LoginService) LoginService(loginUser *dto.UserDto) (bool, *entity.Role,
 				 LEFT JOIN permission p ON rp.permission_id = p.id
 		WHERE u.username = ?`, loginUser.Username,
 	).Scan(&permissions)
-	return true, &role, permissions, nil
+	return user1.Id, &role, permissions, nil
 }
 func NewLoginService(
 	gorm *mysql.GormDb,

@@ -67,6 +67,7 @@ func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 		for i := range permissions {
 			p := permissions[i].Path
 			if j.matchPath(path, p) {
+				context.Set("userId", claims.UserId)
 				context.Set("username", username)
 				context.Set("role", role)
 				context.Set("permissions", permissions)

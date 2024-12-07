@@ -17,7 +17,8 @@ onMounted(() => {
 const captchaImage = ref<HTMLImageElement | null>(null);
 
 interface inviteInfo {
-  inviterUsername: string
+  inviterPhone: string
+  inviterRealName: string
   invitedAdmin: boolean
   description: string
 }
@@ -32,7 +33,8 @@ interface User {
 
 // 定义 inviteInfo 对象的类型
 const InviteInfo = ref<inviteInfo>({
-  inviterUsername: "",
+  inviterPhone: "",
+  inviterRealName: "",
   invitedAdmin: false,
   description: ""
 })
@@ -87,7 +89,10 @@ const getInviteInfo = () => {
   <div class="box">
     <h2>邀请注册</h2>
     <div class="invite-box">
-      <div class="inviter">邀请者手机号: {{ InviteInfo.inviterUsername }}</div>
+      <div class="inviter">
+        <div>邀请者: {{ InviteInfo.inviterRealName }}</div>
+        <div>邀请者手机号: {{ InviteInfo.inviterPhone }}</div>
+      </div>
       <div v-if="InviteInfo.invitedAdmin" class="admin-invite">邀请你成为管理员</div>
       <div class="description">{{ InviteInfo.description }}</div>
     </div>
@@ -151,6 +156,9 @@ const getInviteInfo = () => {
 }
 
 .invite-box .inviter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: bold; /* 加粗邀请人文本 */
   color: #2d87f0; /* 邀请人用户名使用蓝色 */
 }

@@ -2,7 +2,7 @@ package interfaces
 
 import (
 	"family-web-server/src/web/models/dto/login"
-	"family-web-server/src/web/models/eneity/invite"
+	invitePo "family-web-server/src/web/models/po/invite"
 )
 
 type IInviteService interface {
@@ -14,7 +14,7 @@ type IInviteService interface {
 	//  @return string 邀请码
 	//  @return error 错误
 	//
-	InviteService(fromUsername string, inviteDto *login.InviteDto) (string, error)
+	InviteService(fromUserId int, inviteDto *login.InviteDto) (string, error)
 	//
 	// CheckInviteInfoIsValid
 	//  @Description: 检查邀请码是否有效
@@ -22,7 +22,7 @@ type IInviteService interface {
 	//  @return *entity.InviteLink 邀请链接数据
 	//  @return error 错误
 	//
-	CheckInviteInfoIsValid(uuid string) (*invite.InviteLink, error)
+	CheckInviteInfoIsValid(uuid string) (*invitePo.InviteLinkPo, error)
 	//
 	// InviteRegisterService
 	//  @Description: 使用邀请链接进行注册
