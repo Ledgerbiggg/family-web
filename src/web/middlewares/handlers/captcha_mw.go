@@ -7,7 +7,7 @@ import (
 	"family-web-server/src/log"
 	"family-web-server/src/web/common"
 	"family-web-server/src/web/middlewares"
-	"family-web-server/src/web/services/interfaces"
+	"family-web-server/src/web/services/v1/interfaces"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"io"

@@ -8,7 +8,7 @@ import (
 	"family-web-server/src/web/models/eneity/invite"
 	entity "family-web-server/src/web/models/eneity/login"
 	invitePo "family-web-server/src/web/models/po/invite"
-	"family-web-server/src/web/services/interfaces"
+	"family-web-server/src/web/services/v1/interfaces"
 	"family-web-server/src/web/utils"
 	"time"
 )

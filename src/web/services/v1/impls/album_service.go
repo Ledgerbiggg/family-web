@@ -5,7 +5,7 @@ import (
 	"family-web-server/src/pkg/mysql"
 	"family-web-server/src/web/common"
 	albumVo "family-web-server/src/web/models/vo/album"
-	"family-web-server/src/web/services/interfaces"
+	"family-web-server/src/web/services/v1/interfaces"
 	"fmt"
 	"os"
 )

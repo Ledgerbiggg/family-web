@@ -7,7 +7,7 @@ import (
 	"family-web-server/src/web/controllers"
 	"family-web-server/src/web/models/dto/login"
 	login2 "family-web-server/src/web/models/vo/Invite"
-	"family-web-server/src/web/services/interfaces"
+	interfaces2 "family-web-server/src/web/services/v1/interfaces"
 	"family-web-server/src/web/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -17,16 +17,16 @@ type InviteController struct {
 	c             *config.GConfig
 	cm            *controllers.ControllerManager
 	l             *log.ConsoleLogger
-	loginService  interfaces.ILoginService
-	inviteService interfaces.IInviteService
+	loginService  interfaces2.ILoginService
+	inviteService interfaces2.IInviteService
 }
 
 func NewInviteController(
 	c *config.GConfig,
 	cm *controllers.ControllerManager,
 	l *log.ConsoleLogger,
-	loginService interfaces.ILoginService,
-	inviteService interfaces.IInviteService,
+	loginService interfaces2.ILoginService,
+	inviteService interfaces2.IInviteService,
 ) *InviteController {
 	i := &InviteController{
 		c:             c,

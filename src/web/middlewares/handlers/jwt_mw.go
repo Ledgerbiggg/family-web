@@ -36,7 +36,8 @@ func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 			path == "/register" ||
 			path == "/verify" ||
 			path == "/invite/info" ||
-			path == "/invite/register" {
+			path == "/invite/register" ||
+			strings.HasPrefix(path, "/swagger") {
 			context.Next()
 			return
 		}

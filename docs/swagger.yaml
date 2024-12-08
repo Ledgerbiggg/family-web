@@ -1,0 +1,48 @@
+basePath: /v1
+definitions:
+  common.Result:
+    properties:
+      code:
+        type: string
+      data: {}
+      message:
+        type: string
+    type: object
+host: localhost:8001
+info:
+  contact:
+    email: ledgerbiggg@gmail.com
+    name: API Support
+    url: http://www.swagger.io/support
+  description: family-web-server API description
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: My family-web-server API
+  version: "1.0"
+paths:
+  /:category/photos:
+    get:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: The category ID
+        in: path
+        name: category
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      summary: Show an account
+      tags:
+      - accounts
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

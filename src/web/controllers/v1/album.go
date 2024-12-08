@@ -5,7 +5,7 @@ import (
 	"family-web-server/src/log"
 	"family-web-server/src/web/common"
 	"family-web-server/src/web/controllers"
-	"family-web-server/src/web/services/interfaces"
+	"family-web-server/src/web/services/v1/interfaces"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,6 +52,15 @@ func (h *AlbumController) categories(context *gin.Context) {
 	context.JSON(200, common.NewSuccessResult(h.albumService.GetCategoryList()))
 }
 
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        category   path      string  true  "The category ID"
+// @Success      200  {object}  common.Result
+// @Router       /:category/photos [get]
 func (h *AlbumController) categoryPhotos(context *gin.Context) {
 	category := context.Param("category")
 	if category == "" {

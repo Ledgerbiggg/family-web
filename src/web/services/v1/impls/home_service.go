@@ -6,7 +6,7 @@ import (
 	"family-web-server/src/web/models/eneity/home"
 	"family-web-server/src/web/models/eneity/login"
 	homeVo "family-web-server/src/web/models/vo/home"
-	"family-web-server/src/web/services/interfaces"
+	"family-web-server/src/web/services/v1/interfaces"
 )
 
 type HomeService struct {

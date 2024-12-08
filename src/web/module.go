@@ -3,40 +3,30 @@ package web
 import (
 	"family-web-server/src/config"
 	"family-web-server/src/log"
-	controllerManager "family-web-server/src/web/controllers"
-	controllerHandlers "family-web-server/src/web/controllers/v1"
-	middlewareManager "family-web-server/src/web/middlewares"
-	middlewareHandlers "family-web-server/src/web/middlewares/handlers"
-	"family-web-server/src/web/services/impls"
+	"family-web-server/src/web/controllers"
+	controllersV1 "family-web-server/src/web/controllers/v1"
+	"family-web-server/src/web/middlewares"
+	"family-web-server/src/web/middlewares/handlers"
+	servicesV1 "family-web-server/src/web/services/v1"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.uber.org/fx"
 )
 
 var Module = fx.Module("web",
 	// 注册中间件
-	fx.Provide(middlewareManager.NewMiddlewareManager), // 中间件管理者
-	fx.Invoke(middlewareHandlers.NewErrorMiddleware),   // 错误中间件
-	fx.Invoke(middlewareHandlers.NewCorsMiddleware),    // 跨域中间件
-	fx.Invoke(middlewareHandlers.NewSessionMiddleware), // session中间件
-	fx.Invoke(middlewareHandlers.NewJwtMiddleware),     // jwt中间件
-	fx.Invoke(middlewareHandlers.NewCaptchaMiddleware), // 验证码中间件
+	handlers.Module,
 	// 注册控制器
-	fx.Provide(controllerManager.NewControllerManager), // 控制器管理者
-	fx.Invoke(controllerHandlers.NewLoginController),   // 登录控制器
-	fx.Invoke(controllerHandlers.NewHomeController),    // 主页控制器
-	fx.Invoke(controllerHandlers.NewInviteController),  // 邀请控制器
-	fx.Invoke(controllerHandlers.NewAlbumController),   // 相册控制器
+	controllersV1.Module,
 	// 注册服务
-	fx.Provide(impls.NewLoginService),  // 登录服务
-	fx.Provide(impls.NewHomeService),   // 登录服务
-	fx.Provide(impls.NewInviteService), // 邀请服务
-	fx.Provide(impls.NewAlbumService),  // 邀请服务
+	servicesV1.Module,
 	fx.Invoke(func(
 		c *config.GConfig,
 		l *log.ConsoleLogger,
-		mwm *middlewareManager.MiddlewareManager,
-		cm *controllerManager.ControllerManager,
+		mwm *middlewares.MiddlewareManager,
+		cm *controllers.ControllerManager,
 	) {
 		// 创建一个 Gin 引擎实例
 		r := gin.Default()
@@ -62,6 +52,10 @@ var Module = fx.Module("web",
 					controller.GetRoutes()[j].Handle,
 				)
 			}
+		}
+		// 如果是本地开发环境的话 启用 Swagger UI
+		if c.Mode == "dev" {
+			r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		}
 
 		err := r.Run(fmt.Sprintf(":%d", c.Address.Port))
