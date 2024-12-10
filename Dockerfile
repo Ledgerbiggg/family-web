@@ -46,7 +46,7 @@ COPY --from=backend-builder /go/work/config.yaml /usr/local/bin/config.yaml
 COPY --from=backend-builder /go/work/logs /usr/local/bin/logs
 
 # Copy the static assets directory
-COPY --from=backend-builder /go/work/src/web/static /usr/local/bin/static
+COPY --from=backend-builder /go/work/src/static /usr/local/bin/static
 
 # Copy the frontend dist files to the static directory in Nginx
 COPY --from=frontend-builder /app/dist /usr/share/nginx/html
