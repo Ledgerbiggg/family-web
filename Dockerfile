@@ -15,11 +15,11 @@ WORKDIR /go/work
 # Set the Go proxy for module downloading
 ENV GOPROXY https://goproxy.cn
 
-# Claer package
-RUN go mod tidy
-
 # Copy the backend code into the container
 COPY . /go/work
+
+# Claer package
+RUN go mod tidy
 
 # Compile the Go backend
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -installsuffix cgo main.go
