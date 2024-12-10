@@ -15,7 +15,7 @@ COPY ./app ./
 RUN npx vite build
 
 # Stage 2: Backend build (Go)
-FROM golang:1.20 AS backend-builder
+FROM golang:1.21 AS backend-builder
 WORKDIR /go/work
 
 # Set the Go proxy for module downloading
