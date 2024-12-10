@@ -10,13 +10,13 @@ RUN npm install && vite build
 
 # Stage 2: Backend build (Go)
 FROM golang:1.20 AS backend-builder
-WORKDIR /go/src
+WORKDIR /go/work
 
 # Set the Go proxy for module downloading
 ENV GOPROXY https://goproxy.cn
 
 # Copy the backend code into the container
-COPY . /go
+COPY . /go/work
 
 # Compile the Go backend
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -installsuffix cgo main.go
@@ -25,13 +25,13 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -installsuff
 FROM nginx:alpine AS prod
 
 # Copy the compiled Go binary from the backend build
-COPY --from=backend-builder /go/main /usr/local/bin/main
+COPY --from=backend-builder /go/work/main /usr/local/bin/main
 # Copy configuration from the backend build
-COPY --from=backend-builder /go/config.yaml /usr/local/bin/config.yaml
+COPY --from=backend-builder /go/work/config.yaml /usr/local/bin/config.yaml
 # Copy the log.txt file from the backend build
-COPY --from=backend-builder /go/logs /usr/local/bin/logs
+COPY --from=backend-builder /go/work/logs /usr/local/bin/logs
 # Copy the static dir from the backend build
-COPY --from=backend-builder /go/src/web/static /usr/local/bin/static
+COPY --from=backend-builder /go/work/src/web/static /usr/local/bin/static
 
 # Copy the frontend dist files to the static directory in Nginx
 COPY --from=frontend-builder /app/dist /usr/share/nginx/html
