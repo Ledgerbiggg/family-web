@@ -7,7 +7,7 @@ type InviteLinkPo struct {
 	Uuid            string     `gorm:"comment:'邀请链接的唯一标识'"`
 	IsUsed          bool       `gorm:"comment:'链接是否已经使用'"`
 	Description     *string    `gorm:"comment:'邀请链接描述'"`
-	InviterId       string     `gorm:"comment:'邀请人id'"`
+	InviterId       int        `gorm:"comment:'邀请人id'"`
 	InviterPhone    string     `gorm:"comment:'邀请人手机号'"`
 	InviterRealName string     `gorm:"comment:'邀请人真实姓名'"`
 	InvitedRealName string     `gorm:"comment:'被邀请人真实姓名'"`

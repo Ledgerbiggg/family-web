@@ -41,7 +41,6 @@ api.interceptors.response.use(
         if (response.status === 200 && response.data.code === '10000') {
             // 如果携带token
             if (response.headers.token) {
-                console.log("本地存入token")
                 localStorage.setItem('token', response.headers.token);
             }
             return response.data.data;

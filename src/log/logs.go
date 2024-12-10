@@ -31,10 +31,11 @@ func NewConsoleLogger(c *config.GConfig) *ConsoleLogger {
 func (l *ConsoleLogger) log(level int, color, levelStr, message string) {
 	if level >= l.logLevel {
 		// 获取当前时间戳
-		timestamp := time.Now().Format("2006-01-02 15:04:05")
+		//timestamp := time.Now().Format("2006-01-02 15:04:05")
 
 		// 构建日志内容
-		logMessage := fmt.Sprintf("%s[%s] [%s]: %s\n", color, timestamp, levelStr, message)
+		//logMessage := fmt.Sprintf("%s[%s] [%s]: %s\n", color, timestamp, levelStr, message)
+		logMessage := fmt.Sprintf("%s [%s]: %s\n", color, levelStr, message)
 		log.Println(logMessage)
 
 		// 打开或创建日志文件 (根目录下的log.txt)

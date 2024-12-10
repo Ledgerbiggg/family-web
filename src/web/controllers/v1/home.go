@@ -47,6 +47,15 @@ func (h *HomeController) RegisterController() {
 	h.cm.AddController(h)
 }
 
+// cards godoc
+// @Summary      获取主页home中的卡片
+// @Description  获取主页home中的卡片(根据角色)
+// @Tags         home
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  common.Result
+// @Router       /home/cards [get]
 func (h *HomeController) cards(context *gin.Context) {
 	value, exists := context.Get("role")
 	if exists {

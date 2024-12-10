@@ -52,7 +52,16 @@ func (ic *InviteController) GetRoutes() []*controllers.Route {
 	}
 }
 
-// Invite 邀请注册
+// getInviteLink godoc
+// @Summary      邀请注册link获取
+// @Description  邀请注册链接获取,其他人可以使用链接直接注册账号
+// @Tags         invite
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        body  body  login.InviteDto  true  "邀请信息"
+// @Success      200  {object}  common.Result
+// @Router       /invite/get-link [post]
 func (ic *InviteController) getInviteLink(context *gin.Context) {
 	// 校验参数
 	var i = &login.InviteDto{}
@@ -71,7 +80,16 @@ func (ic *InviteController) getInviteLink(context *gin.Context) {
 	context.JSON(200, common.NewSuccessResult(map[string]string{"uid": uid}))
 }
 
-// InviteInfo 根据邀请的uuid获取邀请信息
+// inviteInfo godoc
+// @Summary      获取邀请link信息
+// @Description  根据邀请的uuid获取邀请信息
+// @Tags         invite
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        uid   query   string  true  "邀请uuid"
+// @Success      200  {object}  common.Result
+// @Router       /invite/info [get]
 func (ic *InviteController) inviteInfo(context *gin.Context) {
 	// 校验参数
 	uid := context.Query("uid")
@@ -90,7 +108,16 @@ func (ic *InviteController) inviteInfo(context *gin.Context) {
 	context.JSON(200, common.NewSuccessResult(login2.NewInviteVo(info)))
 }
 
-// QrCode 获取二维码
+// qrCode godoc
+// @Summary      获取邀请二维码
+// @Description  根据邀请link的uuid获取邀请二维码
+// @Tags         invite
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        uid   query   string  true  "邀请uuid"
+// @Success      200  {object}  common.Result
+// @Router       /invite/qr-code [get]
 func (ic *InviteController) qrCode(context *gin.Context) {
 	uid := context.Query("uid")
 	link, err := ic.inviteService.CheckInviteInfoIsValid(uid)
@@ -110,7 +137,7 @@ func (ic *InviteController) qrCode(context *gin.Context) {
 		return
 	}
 	// 获取二维码
-	qrCode, err := utils.GenerateQRCode(fmt.Sprintf("http://%s/Invite-register?uid=%s", ic.c.Address.Domain, uid), 100)
+	qrCode, err := utils.GenerateQRCode(fmt.Sprintf("%s/Invite-register?uid=%s", ic.c.Address.Domain, uid), 100)
 	if err != nil {
 		ic.l.Error("获取二维码失败:" + err.Error())
 		context.Error(err)
@@ -120,7 +147,16 @@ func (ic *InviteController) qrCode(context *gin.Context) {
 	context.Writer.Write(qrCode)
 }
 
-// InviteRegister 使用邀请链接去注册(直接成为管理员)
+// inviteRegister godoc
+// @Summary      使用邀请链接去注册
+// @Description  使用邀请链接去注册(可以直接成为管理员)
+// @Tags         invite
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  common.Result
+// @Param        body  body  login.InviteRegisterDto  true  "邀请注册信息"
+// @Router       /invite/register [post]
 func (ic *InviteController) inviteRegister(context *gin.Context) {
 	// 校验参数
 	var i = &login.InviteRegisterDto{}
@@ -137,6 +173,7 @@ func (ic *InviteController) inviteRegister(context *gin.Context) {
 		return
 	}
 
+	// 邀请注册(校验邀请链接时候的真实姓名和填入的真实姓名是否一致+手机号不能被注册)
 	err := ic.inviteService.InviteRegisterService(i)
 	if err != nil {
 		ic.l.Error("邀请注册失败:" + err.Error())

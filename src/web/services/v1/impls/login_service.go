@@ -19,6 +19,28 @@ type LoginService struct {
 	l    *log.ConsoleLogger
 }
 
+func (l *LoginService) GetRoleAndPermissionByUserId(userId int) (*entity.Role, []*entity.Permission, error) {
+	db := l.gorm.GetDb()
+	var role entity.Role
+	var permissions []*entity.Permission
+	db.Raw(`
+		SELECT r.id, r.name, r.description
+		FROM user u
+				 LEFT JOIN role r ON u.role_id = r.id
+		WHERE u.id = ?;		
+	`, userId).Scan(&role)
+
+	db.Raw(`
+		SELECT p.id, p.path, p.description
+		FROM user u
+				 LEFT JOIN role r ON u.role_id = r.id
+				 LEFT JOIN role_permission rp ON r.id = rp.role_id
+				 LEFT JOIN permission p ON rp.permission_id = p.id
+		WHERE u.id = ?;
+	`, userId).Scan(&permissions)
+	return &role, permissions, nil
+}
+
 func (l *LoginService) VerifyService(verifyDto *dto.VerifyDto) error {
 	var u entity.User
 	db := l.gorm.GetDb()
@@ -80,14 +102,14 @@ func (l *LoginService) CaptchaService() (*captcha.Data, error) {
 }
 
 // LoginService  查询数据库用户数据并比较密码
-func (l *LoginService) LoginService(loginUser *dto.UserDto) (int, *entity.Role, []*entity.Permission, error) {
+func (l *LoginService) LoginService(loginUser *dto.UserDto) (int, error) {
 	var user1 entity.User
 	var role entity.Role
 	var permissions []*entity.Permission
 	l.gorm.GetDb().Where("username = ?", loginUser.Username).Find(&user1)
 	md5.New().Sum([]byte(loginUser.Password))
 	if user1.Password != utils.Md5Encrypt(loginUser.Password) {
-		return 0, nil, permissions, common.LoginErrorError
+		return 0, common.LoginErrorError
 	}
 	// 查询用户角色+用户权限
 	l.gorm.GetDb().Where("id = ?", user1.RoleId).Find(&role)
@@ -100,7 +122,7 @@ func (l *LoginService) LoginService(loginUser *dto.UserDto) (int, *entity.Role, 
 				 LEFT JOIN permission p ON rp.permission_id = p.id
 		WHERE u.username = ?`, loginUser.Username,
 	).Scan(&permissions)
-	return user1.Id, &role, permissions, nil
+	return user1.Id, nil
 }
 func NewLoginService(
 	gorm *mysql.GormDb,

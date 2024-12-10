@@ -1,38 +1,46 @@
-# Use the official Golang image as the builder
-FROM golang AS builder
-# Maintainer information
-MAINTAINER LEDGERBIGGG
+# Stage 1: Frontend build (Vue3 + TypeScript)
+FROM node:20 AS frontend-builder
+WORKDIR /app
 
-# Set the working directory inside the Docker container
+# Copy the frontend code into the container
+COPY ./app /app
+
+# Install dependencies and build the Vue app
+RUN npm install && vite build
+
+# Stage 2: Backend build (Go)
+FROM golang:1.20 AS backend-builder
 WORKDIR /go/src
 
 # Set the Go proxy for module downloading
 ENV GOPROXY https://goproxy.cn
 
-# Copy the local project files to the working directory
-ADD family-web-server /go/src
+# Copy the backend code into the container
+COPY . /go
 
-# Compile the project
+# Compile the Go backend
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -installsuffix cgo main.go
 
-# Use the Alpine image for the final, smaller production image
-FROM alpine AS prod
+# Stage 3: Final production image
+FROM nginx:alpine AS prod
 
-# Copy the compiled binary from the builder image
-COPY --from=builder /go/src/main /main
-# Copy the configuration file from the builder image
-COPY --from=builder /go/src/config.yaml ./config.yaml
-# Copy the log.txt file from the builder image
-COPY --from=builder /go/src/logs ./logs
+# Copy the compiled Go binary from the backend build
+COPY --from=backend-builder /go/main /usr/local/bin/main
+# Copy configuration from the backend build
+COPY --from=backend-builder /go/config.yaml /usr/local/bin/config.yaml
+# Copy the log.txt file from the backend build
+COPY --from=backend-builder /go/logs /usr/local/bin/logs
+# Copy the static dir from the backend build
+COPY --from=backend-builder /go/src/web/static /usr/local/bin/static
 
-# Set the timezone
-RUN echo -e 'https://mirrors.aliyun.com/alpine/v3.6/main/\nhttps://mirrors.aliyun.com/alpine/v3.6/community/' > /etc/apk/repositories \
-    && apk update \
-    && apk add tzdata \
-    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && echo "Asia/Shanghai" > /etc/timezone
+# Copy the frontend dist files to the static directory in Nginx
+COPY --from=frontend-builder /app/dist /usr/share/nginx/html
 
-export 8001
+# Copy the Nginx config (you can mount this config later)
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-# Set the command to execute the binary
-CMD ["/main"]
+# Expose necessary ports (e.g., 80 for Nginx, 8001 for the backend)
+EXPOSE 80 8001
+
+# Start Nginx and the Go backend
+CMD ["sh", "-c", "nginx -g 'daemon off;' & /usr/local/bin/main"]

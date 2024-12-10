@@ -1,8 +1,8 @@
 package interfaces
 
 import (
-	"family-web-server/src/web/models/dto/login"
-	entity "family-web-server/src/web/models/eneity/login"
+	loginDto "family-web-server/src/web/models/dto/login"
+	"family-web-server/src/web/models/eneity/login"
 	"github.com/steambap/captcha"
 )
 
@@ -21,6 +21,16 @@ type ILoginService interface {
 	//  @return error 错误
 	//
 	ValidatePhone(phone string) error
+
+	//
+	// GetRoleAndPermissionByUserId
+	//  @Description: 根据用户id获取角色和权限
+	//  @param userId 用户id
+	//  @return *login.Role 角色
+	//  @return []*login.Permission 权限
+	//  @return error
+	//
+	GetRoleAndPermissionByUserId(userId int) (*login.Role, []*login.Permission, error)
 	//
 	// LoginService
 	//  @Description: 登录服务
@@ -30,19 +40,19 @@ type ILoginService interface {
 	//  @return []*entity.Permission 权限
 	//  @return error 错误
 	//
-	LoginService(*login.UserDto) (int, *entity.Role, []*entity.Permission, error)
+	LoginService(*loginDto.UserDto) (int, error)
 	//
 	// RegisterService
 	//  @Description: 注册服务
 	//  @param *Invite.RegisterDto  前端的用户信息
 	//  @return error 错误
 	//
-	RegisterService(*login.RegisterDto) error
+	RegisterService(*loginDto.RegisterDto) error
 	//
 	// VerifyService
 	//  @Description: 找回密码服务(如果真实姓名和手机号一致就改密码为123456)
 	//  @param *Invite.VerifyDto  前端的用户信息
 	//  @return error 错误
 	//
-	VerifyService(*login.VerifyDto) error
+	VerifyService(*loginDto.VerifyDto) error
 }

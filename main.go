@@ -20,7 +20,9 @@ import (
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 // @host      localhost:8001
 // @BasePath  /v1
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	app := fx.New(
 		config.Module, // 配置文件

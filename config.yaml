@@ -7,7 +7,7 @@ serviceName: family-web
 # 服务地址
 address:
   domain: family-web.com
-  ip: 192.168.10.14
+  ip: 10.147.18.26
   port: 8001
 
 # 服务等级
@@ -15,13 +15,13 @@ serverLevel: v1
 
 # 注册中心redis
 redis:
-  address: 192.168.10.14:6379
+  address: 10.147.18.26:6379
   password: biaoge666
   db: 0
 
 # 数据库
 mysql:
-  address: 192.168.10.14:3306
+  address: 10.147.18.26:3306
   username: root
   password: biaoge666
   database: family-web
@@ -34,8 +34,8 @@ logLevel: 0
 jwt:
   # 密钥
   secretKey: ledger
-  # 有效期(单位:min)
-  expireTime: 30
+  # 有效期(单位:小时)
+  expireTime: 1
 
 static:
   # 静态文件目录

@@ -5,25 +5,29 @@ import (
 	"family-web-server/src/log"
 	"family-web-server/src/web/common"
 	"family-web-server/src/web/middlewares"
+	"family-web-server/src/web/services/v1/interfaces"
 	"family-web-server/src/web/utils"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
 
 type JwtMiddleware struct {
-	l *log.ConsoleLogger
-	c *config.GConfig
+	l  *log.ConsoleLogger
+	c  *config.GConfig
+	ls interfaces.ILoginService
 }
 
 func NewJwtMiddleware(
 	mwm *middlewares.MiddlewareManager,
 	l *log.ConsoleLogger,
 	c *config.GConfig,
+	ls interfaces.ILoginService,
 ) *JwtMiddleware {
 	j := &JwtMiddleware{}
 	mwm.AddMiddleware(j)
 	j.l = l
 	j.c = c
+	j.ls = ls
 	return j
 }
 
@@ -53,10 +57,7 @@ func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 			return
 		}
 		// 获取用户的权限
-		username := claims.Username
-		role := claims.Role
-		permissions := claims.Permissions
-
+		role, permissions, _ := j.ls.GetRoleAndPermissionByUserId(claims.UserId)
 		// 如果是登出请求
 		if path == "/logout" {
 			// 直接进入路由
@@ -69,7 +70,6 @@ func (j *JwtMiddleware) Handle() gin.HandlerFunc {
 			p := permissions[i].Path
 			if j.matchPath(path, p) {
 				context.Set("userId", claims.UserId)
-				context.Set("username", username)
 				context.Set("role", role)
 				context.Set("permissions", permissions)
 				context.Next()

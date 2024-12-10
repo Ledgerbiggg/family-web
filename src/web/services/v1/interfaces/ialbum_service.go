@@ -1,6 +1,9 @@
 package interfaces
 
-import "family-web-server/src/web/models/vo/album"
+import (
+	"family-web-server/src/web/models/eneity/login"
+	"family-web-server/src/web/models/vo/album"
+)
 
 type IAlbumService interface {
 	//
@@ -8,7 +11,7 @@ type IAlbumService interface {
 	//  @Description: 获取所有分类
 	//  @return []*album.CategoryVo 分类
 	//
-	GetCategoryList() []*album.CategoryVo
+	GetCategoryList(role *login.Role) []*album.CategoryVo
 
 	//
 	// GetImageBytesByName
@@ -25,5 +28,5 @@ type IAlbumService interface {
 	//  @param category 分类名称
 	//  @return []*album.PhotoVo 照片
 	//
-	GetCategoryPhotos(category string) []*album.PhotoVo
+	GetCategoryPhotos(category string, role *login.Role) []*album.PhotoVo
 }

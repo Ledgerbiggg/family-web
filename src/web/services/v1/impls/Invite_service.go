@@ -113,7 +113,7 @@ func (l *InviteService) InviteRegisterService(inviteRegisterDto *dto.InviteRegis
 	now := time.Now()
 	link.UsedAt = &now
 	// 保存更新后的链接
-	if err = tx.Save(link).Error; err != nil {
+	if err = tx.Save(invite.NewInviteLink(*link)).Error; err != nil {
 		tx.Rollback() // 出错时回滚事务
 		return err
 	}

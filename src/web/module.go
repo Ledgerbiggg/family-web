@@ -56,11 +56,17 @@ var Module = fx.Module("web",
 		// 如果是本地开发环境的话 启用 Swagger UI
 		if c.Mode == "dev" {
 			r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+			l.Debug(
+				fmt.Sprintf("The Swagger UI is available at : "+
+					"http://localhost:%d/swagger/index.html",
+					c.Address.Port))
 		}
 
+		l.Info(fmt.Sprintf("server started at %d", c.Address.Port))
 		err := r.Run(fmt.Sprintf(":%d", c.Address.Port))
 		if err != nil {
 			l.Error(fmt.Sprintf("failed to start server: %v", err))
 		}
+
 	}),
 )

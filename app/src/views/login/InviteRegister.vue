@@ -65,7 +65,7 @@ const verify = () => {
     return
   }
   user.value.inviteUid = String(route.query.uid || '');
-  api.post("/invite-register", {...user.value}).then((res: any) => {
+  api.post("/invite/register", {...user.value}).then((res: any) => {
     message.success("注册成功,初始密码:123456");
     router.push({name: "Login"});
   }).catch((rea: any) => {
@@ -74,7 +74,7 @@ const verify = () => {
 }
 // 获取邀请信息
 const getInviteInfo = () => {
-  api.get("/invite-info", {uid: route.query.uid}).then((res: any) => {
+  api.get("/invite/info", {uid: route.query.uid}).then((res: any) => {
     if (res) {
       InviteInfo.value = res
     }

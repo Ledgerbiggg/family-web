@@ -8,12 +8,66 @@ definitions:
       message:
         type: string
     type: object
+  login.InviteDto:
+    properties:
+      description:
+        description: 邀请描述
+        type: string
+      invitedAdmin:
+        description: 是否邀请成为管理员
+        type: boolean
+      realName:
+        description: 邀请人的真实姓名
+        type: string
+    required:
+    - description
+    - invitedAdmin
+    - realName
+    type: object
+  login.InviteRegisterDto:
+    properties:
+      inviteUid:
+        type: string
+      realName:
+        type: string
+      username:
+        type: string
+    required:
+    - inviteUid
+    - realName
+    - username
+    type: object
+  login.RegisterDto:
+    properties:
+      confirmPassword:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - confirmPassword
+    - password
+    - username
+    type: object
+  login.UserDto:
+    properties:
+      password:
+        description: 必填，最小6个字符
+        type: string
+      username:
+        description: 必填，最小3个字符，最大20个字符
+        type: string
+    required:
+    - password
+    - username
+    type: object
 host: localhost:8001
 info:
   contact:
     email: ledgerbiggg@gmail.com
-    name: API Support
-    url: http://www.swagger.io/support
+    name: Ledgerbiggg
+    url: https://github.com/Ledgerbiggg/family-web/issues
   description: family-web-server API description
   license:
     name: Apache 2.0
@@ -21,13 +75,13 @@ info:
   title: My family-web-server API
   version: "1.0"
 paths:
-  /:category/photos:
+  /album/{category}/photos:
     get:
       consumes:
       - application/json
-      description: get string by ID
+      description: 通过相册分类id获取这个分类下面的所有照片信息
       parameters:
-      - description: The category ID
+      - description: 分类的id
         in: path
         name: category
         required: true
@@ -39,10 +93,195 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/common.Result'
-      summary: Show an account
+      security:
+      - BearerAuth: []
+      summary: 相册分类照片获取
       tags:
-      - accounts
+      - album
+  /album/category-list:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有的相册分类详情
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 获取所有的相册分类
+      tags:
+      - album
+  /album/photo:
+    get:
+      consumes:
+      - application/json
+      description: 获取某个相册的照片字节数据
+      parameters:
+      - description: 图片的ID
+        in: query
+        name: pid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 获取照片数据
+      tags:
+      - album
+  /captcha:
+    get:
+      consumes:
+      - application/json
+      description: 获取验证码的图片数据
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      summary: 获取验证码
+      tags:
+      - login
+  /home/cards:
+    get:
+      consumes:
+      - application/json
+      description: 获取主页home中的卡片(根据角色)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 获取主页home中的卡片
+      tags:
+      - home
+  /invite/get-link:
+    post:
+      consumes:
+      - application/json
+      description: 邀请注册链接获取,其他人可以使用链接直接注册账号
+      parameters:
+      - description: 邀请信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/login.InviteDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 邀请注册link获取
+      tags:
+      - invite
+  /invite/info:
+    get:
+      consumes:
+      - application/json
+      description: 根据邀请的uuid获取邀请信息
+      parameters:
+      - description: 邀请uuid
+        in: query
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 获取邀请link信息
+      tags:
+      - invite
+  /invite/qr-code:
+    get:
+      consumes:
+      - application/json
+      description: 根据邀请link的uuid获取邀请二维码
+      parameters:
+      - description: 邀请uuid
+        in: query
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 获取邀请二维码
+      tags:
+      - invite
+  /invite/register:
+    post:
+      consumes:
+      - application/json
+      description: 使用邀请链接去注册(可以直接成为管理员)
+      parameters:
+      - description: 邀请注册信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/login.InviteRegisterDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 使用邀请链接去注册
+      tags:
+      - invite
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: 退出登录,清除token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      summary: 退出登录
+      tags:
+      - login
 securityDefinitions:
-  BasicAuth:
-    type: basic
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

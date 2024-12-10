@@ -4,8 +4,8 @@
         "description": "family-web-server API description",
         "title": "My family-web-server API",
         "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
+            "name": "Ledgerbiggg",
+            "url": "https://github.com/Ledgerbiggg/family-web/issues",
             "email": "ledgerbiggg@gmail.com"
         },
         "license": {
@@ -17,9 +17,14 @@
     "host": "localhost:8001",
     "basePath": "/v1",
     "paths": {
-        "/:category/photos": {
+        "/album/category-list": {
             "get": {
-                "description": "get string by ID",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取所有的相册分类详情",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,18 +32,309 @@
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "album"
                 ],
-                "summary": "Show an account",
+                "summary": "获取所有的相册分类",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/album/photo": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取某个相册的照片字节数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "获取照片数据",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "The category ID",
+                        "description": "图片的ID",
+                        "name": "pid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/album/{category}/photos": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "通过相册分类id获取这个分类下面的所有照片信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "相册分类照片获取",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "分类的id",
                         "name": "category",
                         "in": "path",
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/captcha": {
+            "get": {
+                "description": "获取验证码的图片数据",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "login"
+                ],
+                "summary": "获取验证码",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/home/cards": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "获取主页home中的卡片(根据角色)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "获取主页home中的卡片",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/invite/get-link": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "邀请注册链接获取,其他人可以使用链接直接注册账号",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "invite"
+                ],
+                "summary": "邀请注册link获取",
+                "parameters": [
+                    {
+                        "description": "邀请信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.InviteDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/invite/info": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据邀请的uuid获取邀请信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "invite"
+                ],
+                "summary": "获取邀请link信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "邀请uuid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/invite/qr-code": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据邀请link的uuid获取邀请二维码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "invite"
+                ],
+                "summary": "获取邀请二维码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "邀请uuid",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/invite/register": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "使用邀请链接去注册(可以直接成为管理员)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "invite"
+                ],
+                "summary": "使用邀请链接去注册",
+                "parameters": [
+                    {
+                        "description": "邀请注册信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.InviteRegisterDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "退出登录,清除token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "login"
+                ],
+                "summary": "退出登录",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -62,11 +358,90 @@
                     "type": "string"
                 }
             }
+        },
+        "login.InviteDto": {
+            "type": "object",
+            "required": [
+                "description",
+                "invitedAdmin",
+                "realName"
+            ],
+            "properties": {
+                "description": {
+                    "description": "邀请描述",
+                    "type": "string"
+                },
+                "invitedAdmin": {
+                    "description": "是否邀请成为管理员",
+                    "type": "boolean"
+                },
+                "realName": {
+                    "description": "邀请人的真实姓名",
+                    "type": "string"
+                }
+            }
+        },
+        "login.InviteRegisterDto": {
+            "type": "object",
+            "required": [
+                "inviteUid",
+                "realName",
+                "username"
+            ],
+            "properties": {
+                "inviteUid": {
+                    "type": "string"
+                },
+                "realName": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "login.RegisterDto": {
+            "type": "object",
+            "required": [
+                "confirmPassword",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "confirmPassword": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "login.UserDto": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "description": "必填，最小6个字符",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "必填，最小3个字符，最大20个字符",
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

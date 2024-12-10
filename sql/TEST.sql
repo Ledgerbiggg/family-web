@@ -78,19 +78,58 @@ SELECT ap.id,
        ap.format,
        ap.category_id,
        u.nickname,
-       ap.upload_time
+       ap.upload_at
 FROM album_photo ap
+         LEFT JOIN album_category ac ON ap.category_id = ac.id
+         LEFT JOIN album_category_role acr ON ac.id = acr.category_id
          LEFT JOIN user u ON ap.upload_by = u.id
-WHERE ap.category_id = 1;
+WHERE ap.category_id = ?
+  AND acr.role_id = ?;
 
 
 
+SELECT r.id, r.name, r.description
+FROM user u
+         LEFT JOIN role r ON u.role_id = r.id
+WHERE u.id = ?;
+
+SELECT p.id, p.path, p.description
+FROM user u
+         LEFT JOIN role r ON u.role_id = r.id
+         LEFT JOIN role_permission rp ON r.id = rp.role_id
+         LEFT JOIN permission p ON rp.permission_id = p.id
+WHERE u.id = ?;
+
+
+SELECT ac.id,
+       ac.name,
+       ac.description,
+       ac.enabled,
+       ac.sort,
+       ac.view_count,
+       ac.status,
+       ac.created_by,
+       ac.created_at,
+       ac.updated_at,
+       CONCAT(ap.name, '.', ap.format) AS cover_pic
+FROM album_category ac
+         LEFT JOIN album_photo ap ON ac.cover = ap.id
+         LEFT JOIN album_category_role acr ON ac.id = acr.category_id
+WHERE acr.role_id = ?;
 
 
 
-
-
-
+SELECT ap.id,
+       ap.name,
+       ap.description,
+       ap.sort,
+       ap.is_lock,
+       ap.format,
+       ap.category_id,
+       ap.upload_by,
+       ap.upload_at
+FROM album_photo ap
+WHERE ap.id = ?;
 
 
 

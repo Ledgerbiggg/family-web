@@ -53,7 +53,14 @@ func (c *LoginController) RegisterController() {
 	c.cm.AddController(c)
 }
 
-// captcha 生成验证码
+// captcha godoc
+// @Summary      获取验证码
+// @Description  获取验证码的图片数据
+// @Tags         login
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  common.Result
+// @Router       /captcha [get]
 func (c *LoginController) captcha(context *gin.Context) {
 	data, err := c.loginService.CaptchaService()
 	if err != nil {
@@ -77,7 +84,15 @@ func (c *LoginController) captcha(context *gin.Context) {
 	}
 }
 
-// login 登录
+// login godoc
+// @Summary      登录用户
+// @Description  使用验证码+账号+密码登录
+// @Tags         login
+// @Accept       json
+// @Produce      json
+// @Param        body  body  login.UserDto  true  "用户信息"
+// @Success      200  {object}  common.Result
+// @Router       /login [post]
 func (c *LoginController) login(context *gin.Context) {
 	var u = &login.UserDto{}
 	if err := context.ShouldBindJSON(u); err != nil {
@@ -85,10 +100,10 @@ func (c *LoginController) login(context *gin.Context) {
 		context.Error(common.BadRequestError)
 		return
 	}
-	b, r, ps, _ := c.loginService.LoginService(u)
+	b, _ := c.loginService.LoginService(u)
 	if b != 0 {
 		// 查询用户的角色
-		token, err := utils.GenerateToken(b, u.Username, r, ps, c.c.ServiceName, c.c.Jwt.ExpireTime, c.c.Jwt.SecretKey)
+		token, err := utils.GenerateToken(b, u.Username, c.c.ServiceName, c.c.Jwt.ExpireTime, c.c.Jwt.SecretKey)
 		if err != nil {
 			c.l.Error("生成 token 失败:" + err.Error())
 			context.Error(common.SystemServerErrorError)
@@ -101,7 +116,15 @@ func (c *LoginController) login(context *gin.Context) {
 	}
 }
 
-// Register 注册
+// register godoc
+// @Summary      注册
+// @Description  使用验证码+账号+密码+确认密码注册
+// @Tags         login
+// @Accept       json
+// @Produce      json
+// @Param        body  body  login.RegisterDto  true  "用户信息"
+// @Success      200  {object}  common.Result
+// @Router       /login [post]
 func (c *LoginController) register(context *gin.Context) {
 	var r = &login.RegisterDto{}
 	// 参数绑定
@@ -134,7 +157,15 @@ func (c *LoginController) register(context *gin.Context) {
 
 }
 
-// Verify 找回密码
+// register godoc
+// @Summary      找回密码
+// @Description  使用验证码+账号+真实姓名注册
+// @Tags         login
+// @Accept       json
+// @Produce      json
+// @Param        body  body  login.RegisterDto  true  "用户信息"
+// @Success      200  {object}  common.Result
+// @Router       /login [post]
 func (c *LoginController) verify(context *gin.Context) {
 	var v = &login.VerifyDto{}
 	if err := context.ShouldBindJSON(v); err != nil {
@@ -152,8 +183,16 @@ func (c *LoginController) verify(context *gin.Context) {
 
 }
 
-// Logout 退出登录
+// logout godoc
+// @Summary      退出登录
+// @Description  退出登录,清除token
+// @Tags         login
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  common.Result
+// @Router       /login [post]
 func (c *LoginController) logout(context *gin.Context) {
 	//TODO 使用redis去删除token
+	context.Header("token", "logout")
 	context.JSON(200, common.NewSuccessResult(nil))
 }
