@@ -12,9 +12,6 @@ RUN npm install && vite build
 FROM golang:1.20 AS backend-builder
 WORKDIR /go/src
 
-# Set the Go proxy for module downloading
-ENV GOPROXY https://goproxy.cn
-
 # Copy the backend code into the container
 COPY . /go
 
