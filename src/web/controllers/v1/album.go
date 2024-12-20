@@ -8,6 +8,7 @@ import (
 	"family-web-server/src/web/models/eneity/login"
 	"family-web-server/src/web/services/v1/interfaces"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type AlbumController struct {
@@ -100,22 +101,30 @@ func (h *AlbumController) photosByCategory(context *gin.Context) {
 // @Produce      json
 // @Security     BearerAuth
 // @Param        pid   query   string  true  "图片的ID"
+// @Param        categoryId query   string  false "图片所属类别ID"
 // @Success      200  {object}  common.Result
 // @Router       /album/photo [get]
 func (h *AlbumController) photoByPid(context *gin.Context) {
 	// 获取 URL 参数 id
+	categoryId := context.Query("categoryId")
 	pid := context.Query("pid")
 	if pid == "" {
 		context.Error(common.BadRequestError)
 		return
 	}
-	imageBytes, err := h.albumService.GetImageBytesByName(pid)
+	imageBytes, err := h.albumService.GetImageBytesByName(categoryId, pid)
 	if err != nil {
 		context.Error(err)
 		return
 	}
 	// 设置 Content-Type
-	context.Header("Content-Type", "image/jpeg")
+	contentType := "image/jpeg"
+	if strings.HasSuffix(pid, ".png") {
+		contentType = "image/png"
+	} else if strings.HasSuffix(pid, ".gif") {
+		contentType = "image/gif"
+	}
+	context.Header("Content-Type", contentType)
 	// 返回图片文件
 	context.Writer.Write(imageBytes)
 }

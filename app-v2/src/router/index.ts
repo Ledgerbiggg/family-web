@@ -48,9 +48,9 @@ const routes = [
         path: '/album',
         name: 'Album',
         component: () => import('../views/home/album/CategoryView.vue'),
-        beforeEnter: (_: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
-            checkFromHome(from, next); // 调用抽离的函数
-        },
+        // beforeEnter: (_: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
+        //     checkFromHome(from, next); // 调用抽离的函数
+        // },
     },
     // 照片
     {

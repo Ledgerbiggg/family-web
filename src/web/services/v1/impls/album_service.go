@@ -77,7 +77,7 @@ func (a *AlbumService) GetCategoryList(role *login.Role) []*albumVo.CategoryVo {
 	return categoryVos
 }
 
-func (a *AlbumService) GetImageBytesByName(pid string) ([]byte, error) {
+func (a *AlbumService) GetImageBytesByName(category, pid string) ([]byte, error) {
 	var photo *album.Photo
 	a.gorm.GetDb().Raw(`
 		SELECT ap.id,
@@ -96,7 +96,7 @@ func (a *AlbumService) GetImageBytesByName(pid string) ([]byte, error) {
 		return nil, common.NotFoundResourceError
 	}
 	// 假设根目录下有 src/static/img 目录存储图片
-	imagePath := fmt.Sprintf(a.c.Static.Dir+"img/%s", photo.Name+"."+photo.Format)
+	imagePath := fmt.Sprintf(a.c.Static.Dir+"img/%s/%s", category, photo.Name+"."+photo.Format)
 	file, err := os.ReadFile(imagePath)
 	if err != nil {
 		return nil, common.NotFoundResourceError

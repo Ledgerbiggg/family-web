@@ -3,6 +3,7 @@ import {onMounted, ref} from "vue";
 import api from "@/services/api.ts";
 import {message} from "ant-design-vue";
 import {useRouter} from "vue-router";
+import {resetPasswordService} from "@/services/login/login.ts";
 
 const router = useRouter()
 
@@ -39,17 +40,22 @@ const backLogin = () => {
 }
 
 // 注册方法
-const verify = () => {
+const verify = async () => {
   if (!user.value.username || !user.value.reaName || !user.value.captcha) {
     message.warn("请填写完整信息");
     return
   }
-  api.post("/verify", {...user.value}).then((res: any) => {
+  let res = await resetPasswordService(user.value);
+  if (res) {
     message.success("验证成功,密码已重置为123456");
-    router.push({name: "Login"});
-  }).catch((rea: any) => {
+    await router.push({name: "Login"});
+  } else {
     refresh()
-  })
+  }
+  // api.post("/verify", {...user.value}).then((_: any) => {
+  // }).catch((_: any) => {
+  //   refresh()
+  // })
 }
 </script>
 

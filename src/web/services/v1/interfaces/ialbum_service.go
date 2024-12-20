@@ -20,7 +20,7 @@ type IAlbumService interface {
 	//  @return []byte 图片字节
 	//  @return error 错误
 	//
-	GetImageBytesByName(name string) ([]byte, error)
+	GetImageBytesByName(category, name string) ([]byte, error)
 
 	//
 	// GetCategoryPhotos

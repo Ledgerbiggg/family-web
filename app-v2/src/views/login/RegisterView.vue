@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import api from "@/services/api.ts";
 import {message} from "ant-design-vue";
 import {useRouter} from "vue-router";
+import {registerService, RegisterUser} from "@/services/login/register.ts";
 
 const router = useRouter()
 // 在组件挂载后执行刷新验证码
@@ -10,20 +10,9 @@ onMounted(() => {
   refresh();
 });
 
-// 获取 captchaImage 的引用
 const captchaImage = ref<HTMLImageElement | null>(null);
 
-
-// 定义 user 对象的类型
-interface User {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  captcha: string;
-}
-
-// 创建一个响应式的 user 对象
-const user = ref<User>({
+const user = ref<RegisterUser>({
   username: "",
   password: "",
   confirmPassword: "",
@@ -43,7 +32,7 @@ const backLogin = () => {
 }
 
 // 注册方法
-const register = () => {
+const register = async () => {
   if (!user.value.username ||
       !user.value.captcha ||
       !user.value.password ||
@@ -53,13 +42,15 @@ const register = () => {
     message.warn("请填写完整信息");
     return
   }
-  api.post("/register", {...user.value}).then((_: any) => {
+  let res = await registerService(user.value)
+  console.log(res, '0000')
+  if (res) {
     // 跳转到登录
     message.success("注册成功,请登录");
-    router.push("/login");
-  }).catch((_: any) => {
+    await router.push("/login");
+  } else {
     refresh()
-  })
+  }
 }
 </script>
 

@@ -19,7 +19,7 @@ const images = ref<{ src: string, category: number, rotation: number }[]>([]);
 const generateImages = () => {
   const angles = [];
   let angle = 12; // 起始角度
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     angles.push(angle);
     angle = i % 2 === 0 ? angle + 30 : angle - 27;
   }

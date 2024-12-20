@@ -1,26 +1,10 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import api from "@/services/api.ts";
 import {message} from "ant-design-vue";
 import {useRouter} from "vue-router";
+import {User, loginService} from "@/services/login/login.ts";
 
 const router = useRouter()
-
-// 在组件挂载后执行刷新验证码
-onMounted(() => {
-  refresh();
-});
-
-// 定义 user 对象的类型
-interface User {
-  username: string;
-  password: string;
-  captcha: string;
-}
-
-// 获取 captchaImage 的引用
-const captchaImage = ref<HTMLImageElement | null>(null);
-
 // 创建一个响应式的 user 对象
 const user = ref<User>({
   username: "",
@@ -28,23 +12,25 @@ const user = ref<User>({
   captcha: ""
 });
 
+// 在组件挂载后执行刷新验证码
+onMounted(() => {
+  refresh();
+});
+
+// 获取 captchaImage 的引用
+const captchaImage = ref<HTMLImageElement | null>(null);
 // 登录方法
-const login = () => {
+const login = async () => {
   if (!user.value.username || !user.value.password || !user.value.captcha) {
     message.warn("请填写完整信息");
     return
   }
-  api.post("/login", {
-    username: user.value.username,
-    password: user.value.password,
-    captcha: user.value.captcha
-  }).then((res: any) => {
-    // 跳转到主页
+  if (await loginService(user.value)) {
     message.success("登录成功");
-    router.push("/home");
-  }).catch((err: any) => {
-    refresh()
-  })
+    await router.push("/home");
+    return;
+  }
+  refresh()
 }
 // 刷新验证码
 const refresh = () => {

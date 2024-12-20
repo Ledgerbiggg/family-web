@@ -38,12 +38,19 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
     (response: AxiosResponse) => {
+        // 判断响应类型是否为图片（Blob 类型）
+        const isImage = response.headers['content-type'] && response.headers['content-type'].includes('image');
+
+        if (isImage) {
+            // 如果是图片（Blob 类型），直接返回原始响应数据
+            return response;
+        }
         if (response.status === 200 && response.data.code === '10000') {
             // 如果携带token
             if (response.headers.token) {
                 localStorage.setItem('token', response.headers.token);
             }
-            return response.data.data;
+            return response.data.data || 'success';
         }
         if (response.status === 200 && response.data.code !== '10000') {
             message.warn(response.data.message)
@@ -52,6 +59,7 @@ api.interceptors.response.use(
                 router.push({name: 'Login'})
             }
         }
+        console.log('Response data:', response.data);
         return Promise.reject(new Error('Response status is not success'));
     },
     (error: AxiosError) => {
