@@ -79,6 +79,7 @@ func (a *AlbumService) GetCategoryList(role *login.Role) []*albumVo.CategoryVo {
 }
 
 func (a *AlbumService) GetImageBytesByName(category, pid string) ([]byte, error) {
+	// TODO 改成分类名字
 	var photo *album.Photo
 	a.gorm.GetDb().Raw(`
 		SELECT ap.id,

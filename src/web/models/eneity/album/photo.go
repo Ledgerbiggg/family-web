@@ -3,7 +3,6 @@ package album
 import "time"
 
 // Photo 相册照片
-// Photo 相册照片
 type Photo struct {
 	ID          int64      `gorm:"primaryKey;comment:照片ID"`
 	Name        string     `gorm:"comment:照片名称"`
