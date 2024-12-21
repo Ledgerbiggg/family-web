@@ -1,4 +1,4 @@
-import api from "../api.ts";
+import api from "@/services/api.ts";
 
 
 export const homeCardsService = () => {

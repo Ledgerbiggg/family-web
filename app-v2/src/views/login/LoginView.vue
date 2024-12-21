@@ -2,11 +2,11 @@
 import {onMounted, ref} from "vue";
 import {message} from "ant-design-vue";
 import {useRouter} from "vue-router";
-import {User, loginService} from "@/services/login/login.ts";
+import {LoginUser, loginService} from "@/services/login/login.ts";
 
 const router = useRouter()
 // 创建一个响应式的 user 对象
-const user = ref<User>({
+const user = ref<LoginUser>({
   username: "",
   password: "",
   captcha: ""

@@ -6,6 +6,7 @@ type CategoryVo struct {
 	Id          int        `json:"id"`
 	Name        string     `json:"name"`
 	CoverPic    string     `json:"coverPic"`
+	Cover       int        `json:"cover"`
 	Description *string    `json:"description,omitempty"`
 	ViewCount   int        `json:"viewCount"`
 	Status      string     `json:"status"`

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
 import Button from "@/components/Button.vue";
-import http from "@/services/api.ts";
 import {useRouter} from "vue-router";
 import {homeCardsService} from "@/services/home/home.ts";
 

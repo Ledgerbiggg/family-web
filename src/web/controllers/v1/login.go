@@ -35,10 +35,15 @@ func NewLoginController(
 	return c
 }
 
+// GetRoot 获取一级路由
+// @return string
 func (c *LoginController) GetRoot() string {
 	return ""
 }
 
+// GetRoutes returns all the routes for the LoginController.
+// It includes routes for captcha generation, user login, registration,
+// verification, and logout with their respective HTTP methods and handlers.
 func (c *LoginController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
 		{Method: "GET", Path: "/captcha", Handle: c.captcha},
@@ -49,6 +54,10 @@ func (c *LoginController) GetRoutes() []*controllers.Route {
 	}
 }
 
+// RegisterController registers the LoginController to the ControllerManager.
+//
+// It adds the LoginController to the ControllerManager, which is necessary for
+// the routes to be registered and handled by the gin framework.
 func (c *LoginController) RegisterController() {
 	c.cm.AddController(c)
 }

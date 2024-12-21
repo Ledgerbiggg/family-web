@@ -61,13 +61,6 @@ const getInviteInfo = async () => {
   } else {
     await router.push({name: "Login"});
   }
-  // api.get("/invite/info", {uid: route.query.uid}).then((res: any) => {
-  //   if (res) {
-  //     InviteInfo.value = res
-  //   }
-  // }).catch((_: any) => {
-  //   router.push({name: "Login"});
-  // })
 }
 </script>
 

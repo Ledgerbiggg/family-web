@@ -10,7 +10,7 @@ export default defineConfig({
             '/api': {
                 target: 'http://localhost:8001/v1',
                 changeOrigin: true,
-                rewrite: (path) => {
+                rewrite: (path: string) => {
                     console.log('Rewriting path:', path); // 打印路径
                     return path.replace(/^\/api/, '');
                 },
@@ -20,9 +20,12 @@ export default defineConfig({
 
     },
     resolve: {
-        alias: {
-            '@': resolve(__dirname, 'src'),  // 设置 @ 为 src 目录
-        },
+        alias: [
+            {
+                find: '@',
+                replacement: resolve(__dirname, 'src')
+            }
+        ]
     },
     plugins: [vue(), vueDevTools(),],
 })

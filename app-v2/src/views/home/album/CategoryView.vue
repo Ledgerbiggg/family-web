@@ -1,35 +1,36 @@
 <script setup lang="ts">
 import {ref, onMounted} from "vue";
 import {useRouter} from "vue-router";
+import {albumPhotoService} from "@/services/album/category.ts";
+import ImageComponent from "@/components/ImageComponent.vue";
 
 const router = useRouter();
 const showModal = (category: number) => {
-  console.log(category)
   // 跳转到 Photo 页面并传递 category 参数
   router.push({name: 'Photo', params: {category}});
 };
 
 // 图片地址
-const imgSrc = '@/assets/img/a.jpg';
+// const imgSrc = '@/assets/img/a.jpg';
 
 // 用来存储动态生成的图片
-const images = ref<{ src: string, category: number, rotation: number }[]>([]);
+const images = ref<{
+  src: string,
+  category: number,
+  rotation: number,
+  cover: number
+}[]>([]);
 
 // 初始化图片并设置随机的旋转角度
-const generateImages = () => {
+const generateImages = async () => {
+  const res = await albumPhotoService()
   const angles = [];
   let angle = 12; // 起始角度
-  for (let i = 0; i < 4; i++) {
+  res.forEach((item: any, i: number) => {
     angles.push(angle);
     angle = i % 2 === 0 ? angle + 30 : angle - 27;
-  }
-
-  // 创建图片数据
-  images.value = angles.map(angle => ({
-    src: imgSrc,
-    category: 1,
-    rotation: angle,
-  }));
+    images.value.push({src: res, category: item.id, cover: item.cover, rotation: angle});
+  })
 };
 
 onMounted(() => {
@@ -38,19 +39,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- 图片详情 -->
-  <!--  <a-modal v-model:open="open" title="图片详情" @ok="handleOk" :cancelButton="false">-->
-  <!--    <img class="showImgInfo" src="../../../assets/img/a.jpg" alt="图片不显示"/>-->
-  <!--  </a-modal>-->
   <div id="cont">
-    <!-- 动态生成的图片 -->
-    <img v-for="(image, index) in images"
-         :key="index"
-         src="../../../assets/img/a.jpg"
-         class="ima"
-         @click="showModal(image.category)"
-         :style="{ transform: 'rotate(' + image.rotation + 'deg)' }"
-         alt="154"/>
+    <div class="img-box">
+      <image-component v-for="(image) in images" :params="{
+      pid: image.cover,
+      categoryId: image.category
+    }"
+                       :style="{ transform: 'rotate(' + image.rotation + 'deg)' }"
+      />
+    </div>
+<!--     动态生成的图片 -->
+<!--    <img v-for="(image, index) in images"-->
+<!--         :key="index"-->
+<!--         src="../../../assets/img/a.jpg"-->
+<!--         class="ima"-->
+<!--         @click="showModal(image.category)"-->
+<!--         :style="{ transform: 'rotate(' + image.rotation + 'deg)' }"-->
+<!--         alt="154"/>-->
   </div>
 </template>
 
@@ -73,8 +78,10 @@ onMounted(() => {
 }
 
 
-.ima {
+.img-box {
   width: 310px;
+  height: 310px;
+  overflow: hidden;
   padding: 18px;
   margin: 30px;
   background-color: #FFFFFF;

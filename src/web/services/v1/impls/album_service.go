@@ -55,6 +55,7 @@ func (a *AlbumService) GetCategoryList(role *login.Role) []*albumVo.CategoryVo {
 	a.gorm.GetDb().Raw(`
 		SELECT ac.id,
 			   ac.name,
+			   ac.cover,
 			   ac.description,
 			   ac.enabled,
 			   ac.sort,

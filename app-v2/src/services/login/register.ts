@@ -1,4 +1,4 @@
-import api from "../api.ts";
+import api from "@/services/api.ts";
 
 export interface RegisterUser {
     username: string;
@@ -6,7 +6,6 @@ export interface RegisterUser {
     confirmPassword: string;
     captcha: string;
 }
-
 export const registerService =  (user: RegisterUser) => {
     return api.post("/register", { ...user });  // 返回实际的数据
 }

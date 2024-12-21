@@ -56,7 +56,7 @@ const routes = [
     {
         path: '/photo/:category',
         name: 'Photo',
-        component: () => import('../views/home/album/PhotoView2.vue')
+        component: () => import('../views/home/album/PhotoView.vue')
     },
     // 404
     {

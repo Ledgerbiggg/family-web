@@ -1,57 +1,57 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
-import api from '@/services/api';  // 假设你的请求工具已经封装好了
+import {albumPhotoService} from "@/services/album/photo.ts";
+import {message} from "ant-design-vue";  // 假设你的请求工具已经封装好了
 
 // 使用 defineProps 定义 props
 const props = defineProps<{
-  pid: string;
-  categoryId: string;
+  params: {
+    [key: string]: any;
+  };
 }>();
 
 // Reactive state
 const imageUrl = ref<string>('');
-const loading = ref<boolean>(true);
 
-const fetchImage = () => {
-
-  // 获取二进制数据
-  api.get('/album/photo',
-      {pid: props.pid, categoryId: props.categoryId},
-  ).then((res: any) => {
-    // 如果 res.data 是 ArrayBuffer 类型，需要转换为 Blob
-    const blob = new Blob([res.data], { type: 'image/jpeg' });  // 你可以根据实际图片类型来设置 mimeType
-
-    // 创建一个 FileReader 来将 Blob 转换为 Base64
-    const reader = new FileReader();
-
-    // 读取成功后，将 Base64 数据赋给 imageUrl
-    reader.onloadend = () => {
-      imageUrl.value = reader.result as string;  // reader.result 是 Base64 格式
-      console.log(imageUrl.value);  // 打印 Base64 数据，确保它是正确的
-    };
-
-    // 将 Blob 数据转为 Base64 格式
-    reader.readAsDataURL(blob);  // 传入 Blob 对象
-    console.log(imageUrl.value);  // 应该以 "data:image/jpeg;base64," 开头
-
-  })
-
-};
+const fetchImage = async () => {
+  const params = {...props.params};  // 获取所有传入的 props
+  // 检查 params 中是否包含 pid 和 categoryId
+  if (params.pid && params.categoryId) {
+    // 如果包含 pid 和 categoryId，调用 albumPhotoService
+    const res: any = await albumPhotoService(params);
+    imageUrl.value = URL.createObjectURL(res); // 将返回的二进制数据转换为 URL
+  } else {
+    message.warn('参数错误');
+  }
+}
 
 // 生命周期钩子
 onMounted(fetchImage);
 </script>
 
 <template>
-  <div >
-    <img :src="imageUrl" alt="Fetched from backend"/>
+  <div>
+    <!-- 如果 imageUrl 存在，就显示后端图片；否则显示本地默认图片 -->
+    <div class="image">
+      <img  v-if="imageUrl" :src="imageUrl" alt="后端图片"/>
+      <img class="default-image" v-else src="@/assets/img/a.jpg" alt="本地默认图片"/>
+    </div>
   </div>
 </template>
 
-<style scoped>
-/* 可以根据需要添加样式 */
-img {
-  max-width: 100%;
-  height: auto;
+<style scoped lang="scss">
+.default-image {
+  width: 50px;
 }
+
+/* 可以根据需要添加样式 */
+.image {
+  margin-bottom: 15px;
+
+  img {
+    width: 100%;
+  }
+}
+
+
 </style>

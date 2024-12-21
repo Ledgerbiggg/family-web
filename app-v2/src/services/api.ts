@@ -43,23 +43,34 @@ api.interceptors.response.use(
 
         if (isImage) {
             // 如果是图片（Blob 类型），直接返回原始响应数据
-            return response;
+            return response.data;
         }
-        if (response.status === 200 && response.data.code === '10000') {
-            // 如果携带token
+        if (response.status === 200 && response.data) {
+            // 判断是否返回了业务错误（code != '10000'）
+            if (response.data.code !== '10000') {
+                const isBlob = response.data instanceof Blob;
+                if (isBlob) {
+                    return;
+                }
+                // 如果是错误信息，显示警告消息
+                message.warn(response.data.message);
+
+                // 登录过期需要重新登录
+                if (response.data.code === '20008') {
+                    router.push({name: 'Login'});
+                }
+                return Promise.reject(new Error(response.data.message));
+            }
+
+            // 如果有 token 返回，存储到本地
             if (response.headers.token) {
                 localStorage.setItem('token', response.headers.token);
             }
+
+            // 返回正常的业务数据
             return response.data.data || 'success';
         }
-        if (response.status === 200 && response.data.code !== '10000') {
-            message.warn(response.data.message)
-            // 登录过期需要重新登录
-            if (response.data.code === '20008') {
-                router.push({name: 'Login'})
-            }
-        }
-        console.log('Response data:', response.data);
+
         return Promise.reject(new Error('Response status is not success'));
     },
     (error: AxiosError) => {
@@ -89,6 +100,7 @@ interface Params {
 interface RequestConfig {
     method: 'get' | 'post' | 'put' | 'delete';
     url: string;
+    responseType?: 'json' | 'blob' | 'text';
     params?: Params;
     data?: Params;
 }
@@ -107,12 +119,14 @@ const http = {
      * GET 请求
      * @param url 请求地址
      * @param params 请求参数
+     * @param responseType 响应数据类型，默认是 'json'
      * @returns 返回一个 Promise 对象，结果是请求的响应数据
      */
-    get<T>(url: string, params?: Params): Promise<RequestResponse<T>> {
+    get<T>(url: string, params?: Params, responseType: 'json' | 'blob' | 'text' = 'json'): Promise<RequestResponse<T>> {
         const config: RequestConfig = {
             method: 'get',
             url: url,
+            responseType: responseType, // 设置响应类型
         };
         if (params) config.params = params;
         return api(config);
@@ -122,12 +136,14 @@ const http = {
      * POST 请求
      * @param url 请求地址
      * @param params 请求参数
+     * @param responseType 响应数据类型，默认是 'json'
      * @returns 返回一个 Promise 对象，结果是请求的响应数据
      */
-    post<T>(url: string, params?: Params): Promise<RequestResponse<T>> {
+    post<T>(url: string, params?: Params, responseType: 'json' | 'blob' | 'text' = 'json'): Promise<RequestResponse<T>> {
         const config: RequestConfig = {
             method: 'post',
             url: url,
+            responseType: responseType, // 设置响应类型
         };
         if (params) config.data = params;
         return api(config);
@@ -137,12 +153,14 @@ const http = {
      * PUT 请求
      * @param url 请求地址
      * @param params 请求参数
+     * @param responseType 响应数据类型，默认是 'json'
      * @returns 返回一个 Promise 对象，结果是请求的响应数据
      */
-    put<T>(url: string, params?: Params): Promise<RequestResponse<T>> {
+    put<T>(url: string, params?: Params, responseType: 'json' | 'blob' | 'text' = 'json'): Promise<RequestResponse<T>> {
         const config: RequestConfig = {
             method: 'put',
             url: url,
+            responseType: responseType, // 设置响应类型
         };
         if (params) config.params = params;
         return api(config);
@@ -152,12 +170,14 @@ const http = {
      * DELETE 请求
      * @param url 请求地址
      * @param params 请求参数
+     * @param responseType 响应数据类型，默认是 'json'
      * @returns 返回一个 Promise 对象，结果是请求的响应数据
      */
-    delete<T>(url: string, params?: Params): Promise<RequestResponse<T>> {
+    delete<T>(url: string, params?: Params, responseType: 'json' | 'blob' | 'text' = 'json'): Promise<RequestResponse<T>> {
         const config: RequestConfig = {
             method: 'delete',
             url: url,
+            responseType: responseType, // 设置响应类型
         };
         if (params) config.params = params;
         return api(config);
