@@ -16,7 +16,7 @@ type ConsoleLogger struct {
 // 日志等级常量
 const (
 	DebugLevel = iota // 0
-	InfoLevel         // 1
+	InfoLevel         // 测试分类
 	WarnLevel         // 2
 	ErrorLevel        // 3
 )

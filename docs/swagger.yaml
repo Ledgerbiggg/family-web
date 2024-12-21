@@ -73,7 +73,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   title: My family-web-server API
-  version: "1.0"
+  version: "测试分类.0"
 paths:
   /album/{category}/photos:
     get:

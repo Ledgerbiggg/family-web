@@ -6,7 +6,11 @@ type Result struct {
 	Data    any    `json:"data,omitempty"`
 }
 
-func NewSuccessResult(data any) *Result {
+func NewSuccessResult() *Result {
+	return &Result{Code: Success, Message: "操作成功"}
+}
+
+func NewSuccessResultWithData(data any) *Result {
 	return &Result{Code: Success, Message: "操作成功", Data: data}
 }
 

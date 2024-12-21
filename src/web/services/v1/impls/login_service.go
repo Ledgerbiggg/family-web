@@ -60,7 +60,7 @@ func (l *LoginService) VerifyService(verifyDto *dto.VerifyDto) error {
 
 func (l *LoginService) ValidatePhone(phone string) error {
 	// 正则表达式用于验证手机号格式
-	phoneRegex := `^1[3-9]\d{9}$`
+	phoneRegex := `^测试分类[3-9]\d{9}$`
 	matched, err := regexp.MatchString(phoneRegex, phone)
 	if err != nil {
 		// 如果正则匹配出现错误，返回相应的错误

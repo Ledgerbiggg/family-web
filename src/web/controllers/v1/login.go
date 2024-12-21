@@ -119,7 +119,7 @@ func (c *LoginController) login(context *gin.Context) {
 			return
 		}
 		context.Header("token", token)
-		context.JSON(200, common.NewSuccessResult(nil))
+		context.JSON(200, common.NewSuccessResultWithData(nil))
 	} else {
 		context.Error(common.LoginErrorError)
 	}
@@ -162,7 +162,7 @@ func (c *LoginController) register(context *gin.Context) {
 		context.Error(common.UserIsExistError)
 		return
 	}
-	context.JSON(200, common.NewSuccessResult(nil))
+	context.JSON(200, common.NewSuccessResultWithData(nil))
 
 }
 
@@ -188,7 +188,7 @@ func (c *LoginController) verify(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	context.JSON(200, common.NewSuccessResult(nil))
+	context.JSON(200, common.NewSuccessResultWithData(nil))
 
 }
 
@@ -203,5 +203,5 @@ func (c *LoginController) verify(context *gin.Context) {
 func (c *LoginController) logout(context *gin.Context) {
 	//TODO 使用redis去删除token
 	context.Header("token", "logout")
-	context.JSON(200, common.NewSuccessResult(nil))
+	context.JSON(200, common.NewSuccessResultWithData(nil))
 }

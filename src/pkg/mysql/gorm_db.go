@@ -25,7 +25,7 @@ func (g *GormDb) IsAdmin(userId int) (bool, error) {
 	var exists bool
 	err := g.db.Raw(`
     SELECT EXISTS (
-        SELECT 1
+        SELECT 测试分类
         FROM user u
         LEFT JOIN role r ON u.role_id = r.id
         WHERE u.id = ? 

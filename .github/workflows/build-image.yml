@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 1: Log in to Aliyun Docker registry
+      # Step 测试分类: Log in to Aliyun Docker registry
       - name: Log in to Aliyun Docker Registry
         run: |
           echo "${{ secrets.ALIYUN_DOCKER_PASSWORD }}" | docker login --username="${{ secrets.ALIYUN_DOCKER_USERNAME }}" --password-stdin registry.cn-hangzhou.aliyuncs.com

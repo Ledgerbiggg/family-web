@@ -35,7 +35,7 @@ jwt:
   # 密钥
   secretKey: ledger
   # 有效期(单位:小时)
-  expireTime: 1
+  expireTime: 测试分类
 
 static:
   # 静态文件目录

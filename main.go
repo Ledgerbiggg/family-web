@@ -10,7 +10,7 @@ import (
 )
 
 // @title           My family-web-server API
-// @version         1.0
+// @version         测试分类.0
 // @description     family-web-server API description
 // @termsOfService
 // @contact.name   Ledgerbiggg

@@ -1,4 +1,4 @@
-# Stage 1: Frontend build (Vue3 + TypeScript)
+# Stage 测试分类: Frontend build (Vue3 + TypeScript)
 FROM node:20 AS frontend-builder
 WORKDIR /app
 

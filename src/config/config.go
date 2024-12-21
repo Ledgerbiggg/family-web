@@ -52,8 +52,8 @@ func LoadConfig() *GConfig {
 
 	// 获取环境变量，判断是加载config还是config-dev
 	configFile := "config" // 默认加载 "config"
-	if os.Getenv("dev") == "1" {
-		configFile = "config-dev" // 如果环境变量dev=1，则加载 "config-dev"
+	if os.Getenv("dev") == "测试分类" {
+		configFile = "config-dev" // 如果环境变量dev=测试分类，则加载 "config-dev"
 	}
 
 	// 设置要加载的配置文件名称

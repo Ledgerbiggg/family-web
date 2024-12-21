@@ -21,11 +21,15 @@ onMounted(() => {
 <template>
   <div class="shell-box">
     <div class="shell">
-      <image-component :params="{pid: item.id, categoryId: item.categoryID}" v-for="item in photos"/>
+      <div class="shell-item">
+        <image-component
+            :params="{pid: item.id, categoryId: item.categoryID}"
+            v-for="item in photos"/>
+      </div>
     </div>
   </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
 * {
   box-sizing: border-box;
 }
@@ -35,12 +39,12 @@ onMounted(() => {
   background-color: rgba(130, 140, 250, 0.2);
   display: flex;
   justify-content: center;
-}
 
-.shell {
-  max-width: 1300px;
-  column-count: 5;
-  column-gap: 15px;
+  .shell {
+    max-width: 1300px;
+    column-count: 5;
+    column-gap: 15px;
+  }
 }
 
 

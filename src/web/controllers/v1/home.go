@@ -60,7 +60,7 @@ func (h *HomeController) cards(context *gin.Context) {
 	value, exists := context.Get("role")
 	if exists {
 		role := value.(*login.Role)
-		context.JSON(200, common.NewSuccessResult(h.homeService.GetHomeCardData(role)))
+		context.JSON(200, common.NewSuccessResultWithData(h.homeService.GetHomeCardData(role)))
 	} else {
 		context.JSON(200, common.AdminRoleError)
 	}

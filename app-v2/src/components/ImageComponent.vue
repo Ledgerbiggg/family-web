@@ -33,8 +33,8 @@ onMounted(fetchImage);
   <div>
     <!-- 如果 imageUrl 存在，就显示后端图片；否则显示本地默认图片 -->
     <div class="image">
-      <img  v-if="imageUrl" :src="imageUrl" alt="后端图片"/>
-      <img class="default-image" v-else src="@/assets/img/a.jpg" alt="本地默认图片"/>
+      <img v-if="imageUrl" :src="imageUrl" alt="后端图片"/>
+      <img class="default-image" v-else src="@/assets/404.png" alt="本地默认图片"/>
     </div>
   </div>
 </template>
@@ -46,8 +46,6 @@ onMounted(fetchImage);
 
 /* 可以根据需要添加样式 */
 .image {
-  margin-bottom: 15px;
-
   img {
     width: 100%;
   }

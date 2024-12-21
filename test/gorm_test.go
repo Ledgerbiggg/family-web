@@ -9,6 +9,6 @@ func TestGorm(t *testing.T) {
 			FROM role r
 					 LEFT JOIN role_permission pr ON r.id = pr.role_id
 					 LEFT JOIN permission p ON pr.permission_id = p.id
-			WHERE r.id = 1`).Scan(&results)
+			WHERE r.id = 测试分类`).Scan(&results)
 	t.Log(results)
 }

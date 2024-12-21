@@ -77,7 +77,7 @@ func (ic *InviteController) getInviteLink(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	context.JSON(200, common.NewSuccessResult(map[string]string{"uid": uid}))
+	context.JSON(200, common.NewSuccessResultWithData(map[string]string{"uid": uid}))
 }
 
 // inviteInfo godoc
@@ -105,7 +105,7 @@ func (ic *InviteController) inviteInfo(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	context.JSON(200, common.NewSuccessResult(login2.NewInviteVo(info)))
+	context.JSON(200, common.NewSuccessResultWithData(login2.NewInviteVo(info)))
 }
 
 // qrCode godoc
@@ -181,7 +181,7 @@ func (ic *InviteController) inviteRegister(context *gin.Context) {
 		return
 	}
 
-	context.JSON(200, common.NewSuccessResult(nil))
+	context.JSON(200, common.NewSuccessResultWithData(nil))
 }
 func (ic *InviteController) RegisterController() {
 	ic.cm.AddController(ic)

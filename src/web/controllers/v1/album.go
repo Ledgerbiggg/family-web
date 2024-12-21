@@ -7,6 +7,7 @@ import (
 	"family-web-server/src/web/controllers"
 	"family-web-server/src/web/models/eneity/login"
 	"family-web-server/src/web/services/v1/interfaces"
+	"family-web-server/src/web/utils"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -43,6 +44,7 @@ func (h *AlbumController) GetRoutes() []*controllers.Route {
 		{Method: "GET", Path: "/category-list", Handle: h.categories},
 		{Method: "GET", Path: "/:category/photos", Handle: h.photosByCategory},
 		{Method: "GET", Path: "/photo", Handle: h.photoByPid},
+		{Method: "GET", Path: "/fresh-photo", Handle: h.freshPhoto},
 	}
 }
 
@@ -63,7 +65,7 @@ func (h *AlbumController) categories(context *gin.Context) {
 	value, exists := context.Get("role")
 	if exists {
 		role := value.(*login.Role)
-		context.JSON(200, common.NewSuccessResult(h.albumService.GetCategoryList(role)))
+		context.JSON(200, common.NewSuccessResultWithData(h.albumService.GetCategoryList(role)))
 		return
 	}
 	context.JSON(200, common.AdminRoleError)
@@ -90,7 +92,7 @@ func (h *AlbumController) photosByCategory(context *gin.Context) {
 		context.Error(common.BadRequestError)
 		return
 	}
-	context.JSON(200, common.NewSuccessResult(h.albumService.GetCategoryPhotos(category, role)))
+	context.JSON(200, common.NewSuccessResultWithData(h.albumService.GetCategoryPhotos(category, role)))
 }
 
 // photoByPid godoc
@@ -127,4 +129,13 @@ func (h *AlbumController) photoByPid(context *gin.Context) {
 	context.Header("Content-Type", contentType)
 	// 返回图片文件
 	context.Writer.Write(imageBytes)
+}
+
+func (h *AlbumController) freshPhoto(context *gin.Context) {
+	go func() {
+		utils.ReadPathAllDir("./images",
+			h.albumService.SaveCategoryByCategoryName,
+			h.albumService.SavePhotoByCategoryIdAndPhotoName)
+	}()
+	context.JSON(200, common.NewSuccessResult())
 }

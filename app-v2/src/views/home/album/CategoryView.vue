@@ -10,8 +10,6 @@ const showModal = (category: number) => {
   router.push({name: 'Photo', params: {category}});
 };
 
-// 图片地址
-// const imgSrc = '@/assets/img/a.jpg';
 
 // 用来存储动态生成的图片
 const images = ref<{
@@ -28,7 +26,7 @@ const generateImages = async () => {
   let angle = 12; // 起始角度
   res.forEach((item: any, i: number) => {
     angles.push(angle);
-    angle = i % 2 === 0 ? angle + 30 : angle - 27;
+    angle = i % 2 === 0 ? angle + 10 : angle - 13;
     images.value.push({src: res, category: item.id, cover: item.cover, rotation: angle});
   })
 };
@@ -40,30 +38,18 @@ onMounted(() => {
 
 <template>
   <div id="cont">
-    <div class="img-box">
-      <image-component v-for="(image) in images" :params="{
-      pid: image.cover,
-      categoryId: image.category
-    }"
-                       :style="{ transform: 'rotate(' + image.rotation + 'deg)' }"
+    <div class="img-box" v-for="(image) in images"
+         :style="{ transform: 'rotate(' + image.rotation + 'deg)' }"
+    >
+      <image-component
+          @click="showModal(image.category)"
+          :params="{pid: image.cover,categoryId: image.category }"
       />
     </div>
-<!--     动态生成的图片 -->
-<!--    <img v-for="(image, index) in images"-->
-<!--         :key="index"-->
-<!--         src="../../../assets/img/a.jpg"-->
-<!--         class="ima"-->
-<!--         @click="showModal(image.category)"-->
-<!--         :style="{ transform: 'rotate(' + image.rotation + 'deg)' }"-->
-<!--         alt="154"/>-->
   </div>
 </template>
 
 <style scoped>
-.showImgInfo {
-  width: 100%;
-  height: 100%;
-}
 
 #cont {
   width: 100vw;
@@ -80,15 +66,13 @@ onMounted(() => {
 
 .img-box {
   width: 310px;
-  height: 310px;
-  overflow: hidden;
   padding: 18px;
   margin: 30px;
-  background-color: #FFFFFF;
   transition: transform 0.8s;
+  background: #ddd;
 }
 
-.ima:hover {
-  transform: scale(1.5) rotate(0deg) !important;
+.img-box:hover {
+  transform: scale(1.2) rotate(0deg) !important;
 }
 </style>
