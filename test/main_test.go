@@ -6,6 +6,7 @@ import (
 	"family-web-server/src/log"
 	"family-web-server/src/pkg"
 	"family-web-server/src/web"
+	"family-web-server/src/web/models/eneity/login"
 	"family-web-server/src/web/services/v1/interfaces"
 	"go.uber.org/fx"
 	"os"
@@ -13,8 +14,19 @@ import (
 )
 
 var (
+	// 管理员角色
+	adminRole *login.Role
+	// 相册服务
 	albumService interfaces.IAlbumService
 )
+
+func init() {
+	adminRole = &login.Role{
+		Id:          1,
+		Name:        "",
+		Description: nil,
+	}
+}
 
 func TestMain(m *testing.M) {
 	app := fx.New(
