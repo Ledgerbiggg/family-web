@@ -2,12 +2,16 @@
 mode: test
 
 # 服务名称
-serviceName: family-web
+serviceName: family-web-test
 
 # 服务地址
 address:
+  domain: localhost
   ip: 10.147.18.26
   port: 8001
+
+# 服务等级
+serverLevel: v1
 
 # 注册中心redis
 redis:
@@ -30,8 +34,11 @@ logLevel: 0
 jwt:
   # 密钥
   secretKey: ledger
-  # 有效期(单位:min)
-  expireTime: 30
+  # 有效期(单位:小时)
+  expireTime: 1
 
+static:
+  # 静态文件目录
+  dir: ./src/static/
 
 

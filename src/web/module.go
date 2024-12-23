@@ -63,10 +63,11 @@ var Module = fx.Module("web",
 		}
 
 		l.Info(fmt.Sprintf("server started at %d", c.Address.Port))
-		err := r.Run(fmt.Sprintf(":%d", c.Address.Port))
-		if err != nil {
-			l.Error(fmt.Sprintf("failed to start server: %v", err))
-		}
-
+		// 避免gin的阻塞服务,而是使用fx的阻塞,防止编写的测试服务卡主
+		go func() {
+			if err := r.Run(fmt.Sprintf(":%d", c.Address.Port)); err != nil {
+				l.Error(fmt.Sprintf("failed to start server: %v", err))
+			}
+		}()
 	}),
 )
