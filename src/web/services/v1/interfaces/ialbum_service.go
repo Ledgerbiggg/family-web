@@ -14,13 +14,13 @@ type IAlbumService interface {
 	GetCategoryList(role *login.Role) []*album.CategoryVo
 
 	//
-	// GetImageBytesByName
+	// GetImageBytesByCategoryIdAndPid
 	//  @Description: 根据图片名称获取图片
-	//  @param name 图片名称
+	//  @param pid 图片id
 	//  @return []byte 图片字节
 	//  @return error 错误
 	//
-	GetImageBytesByName(category, name string) ([]byte, error)
+	GetImageBytesByCategoryIdAndPid(pid string) ([]byte, error)
 
 	//
 	// GetCategoryPhotos
@@ -36,7 +36,7 @@ type IAlbumService interface {
 	//  @param categoryName 分类名称
 	//  @return int 保存的ID
 	//
-	SaveCategoryByCategoryName(categoryName string) int
+	SaveCategoryByCategoryName(categoryName string) (int, error)
 
 	//
 	// SavePhotoByCategoryIdAndPhotoName
@@ -44,5 +44,5 @@ type IAlbumService interface {
 	//  @param categoryId 分类ID
 	//  @param photoName 照片名称
 	//
-	SavePhotoByCategoryIdAndPhotoName(categoryId int, photoName string)
+	SavePhotoByCategoryIdAndPhotoName(categoryId int, photoName string) error
 }

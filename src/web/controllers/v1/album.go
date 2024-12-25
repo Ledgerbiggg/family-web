@@ -103,18 +103,16 @@ func (h *AlbumController) photosByCategory(context *gin.Context) {
 // @Produce      json
 // @Security     BearerAuth
 // @Param        pid   query   string  true  "图片的ID"
-// @Param        categoryId query   string  false "图片所属类别ID"
 // @Success      200  {object}  common.Result
 // @Router       /album/photo [get]
 func (h *AlbumController) photoByPid(context *gin.Context) {
 	// 获取 URL 参数 id
-	categoryId := context.Query("categoryId")
 	pid := context.Query("pid")
 	if pid == "" {
 		context.Error(common.BadRequestError)
 		return
 	}
-	imageBytes, err := h.albumService.GetImageBytesByName(categoryId, pid)
+	imageBytes, err := h.albumService.GetImageBytesByCategoryIdAndPid(pid)
 	if err != nil {
 		context.Error(err)
 		return
@@ -133,7 +131,7 @@ func (h *AlbumController) photoByPid(context *gin.Context) {
 
 func (h *AlbumController) freshPhoto(context *gin.Context) {
 	go func() {
-		utils.ReadPathAllDir("./images",
+		utils.ReadPathAllDir("./src/static/img/",
 			h.albumService.SaveCategoryByCategoryName,
 			h.albumService.SavePhotoByCategoryIdAndPhotoName)
 	}()

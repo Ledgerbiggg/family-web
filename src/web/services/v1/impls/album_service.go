@@ -29,7 +29,7 @@ func NewAlbumService(
 ) interfaces.IAlbumService {
 	return &AlbumService{c: cf, gorm: gorm, l: l}
 }
-func (a *AlbumService) SaveCategoryByCategoryName(categoryName string) int {
+func (a *AlbumService) SaveCategoryByCategoryName(categoryName string) (int, error) {
 	var category album.Category
 
 	// 检查数据库中是否已有相同名称的记录
@@ -38,40 +38,51 @@ func (a *AlbumService) SaveCategoryByCategoryName(categoryName string) int {
 
 	if result.Error == nil {
 		// 已存在，返回现有记录的 ID
-		return category.Id
+		a.l.Info("已存在，返回现有记录的 ID")
+		return category.Id, result.Error
 	}
 
 	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		// 发生其他错误
-		panic(result.Error)
+		a.l.Error("未知错误:" + result.Error.Error())
+		return category.Id, result.Error
 	}
 
 	// 如果不存在，插入新记录
-	newCategory := &album.Category{Name: categoryName}
-	db.Save(newCategory)
+	newCategory := &album.Category{Name: categoryName, Status: "archived"}
+	tx := db.Save(newCategory)
+	if tx.Error != nil {
+		a.l.Error("插入新记录失败:" + tx.Error.Error())
+		return 0, tx.Error
+	}
 
-	return newCategory.Id
+	return newCategory.Id, nil
 }
-func (a *AlbumService) SavePhotoByCategoryIdAndPhotoName(categoryId int, photoName string) {
+func (a *AlbumService) SavePhotoByCategoryIdAndPhotoName(categoryId int, photoName string) error {
 	var photo album.Photo
 
 	// 检查是否已存在相同 CategoryID 和 Name 的记录
 	db := a.gorm.GetDb()
 	result := db.Where("category_id = ? AND name = ?", categoryId, photoName).First(&photo)
 
-	if result.Error == nil {
-		a.l.Error("相同 CategoryID 和 Name 的记录已存在")
-		return
+	if result.Error == nil && photo.ID != 0 {
+		a.l.Info("相同 CategoryID 和 Name 的记录已存在")
+		return nil
 	}
 
 	if result.Error != nil && !errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		a.l.Error(result.Error.Error())
-		return
+		a.l.Error("未知错误:" + result.Error.Error())
+		return nil
 	}
 
 	// 如果不存在，插入新记录
 	newPhoto := &album.Photo{Name: photoName, CategoryID: categoryId}
-	db.Save(newPhoto)
+	tx := db.Save(newPhoto)
+	if tx.Error != nil {
+		a.l.Error("插入新记录失败:" + tx.Error.Error())
+		return tx.Error
+	}
+	return nil
 }
 
 func (a *AlbumService) GetCategoryPhotos(category string, role *login.Role) []*albumVo.PhotoVo {
@@ -128,7 +139,7 @@ func (a *AlbumService) GetCategoryList(role *login.Role) []*albumVo.CategoryVo {
 	return categoryVos
 }
 
-func (a *AlbumService) GetImageBytesByName(_, pid string) ([]byte, error) {
+func (a *AlbumService) GetImageBytesByCategoryIdAndPid(pid string) ([]byte, error) {
 	var photoPo *albumPo.PhotoPo
 	a.gorm.GetDb().Raw(`
 		SELECT ap.id,
@@ -149,7 +160,7 @@ func (a *AlbumService) GetImageBytesByName(_, pid string) ([]byte, error) {
 		return nil, common.NotFoundResourceError
 	}
 	// 假设根目录下有 src/static/img 目录存储图片
-	imagePath := fmt.Sprintf(a.c.Static.Dir+"img/%s/%s", photoPo.CategoryName, photoPo.Name+"."+photoPo.Format)
+	imagePath := fmt.Sprintf(a.c.Static.Dir+"img/%s/%s", photoPo.CategoryName, photoPo.Name)
 	file, err := os.ReadFile(imagePath)
 	if err != nil {
 		return nil, common.NotFoundResourceError

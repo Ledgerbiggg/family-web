@@ -13,8 +13,8 @@ import (
 // fileFn: 处理文件的回调函数 dirId: 子目录的id fileName: 文件的名称
 func ReadPathAllDir(
 	path string,
-	dirFn func(dirName string) int,
-	fileFn func(dirId int, fileName string)) {
+	dirFn func(dirName string) (int, error),
+	fileFn func(dirId int, fileName string) error) {
 	// 读取目录内容
 	entries, err := os.ReadDir(path)
 	if err != nil {
@@ -26,7 +26,7 @@ func ReadPathAllDir(
 	for _, entry := range entries {
 		// 只处理文件夹
 		if entry.IsDir() {
-			dirId := dirFn(entry.Name())
+			dirId, _ := dirFn(entry.Name())
 			readPathAllPic(path+"/"+entry.Name(), dirId, fileFn)
 		}
 	}
@@ -36,7 +36,7 @@ func ReadPathAllDir(
 // path: 目录的路径
 // dirId: 目录id
 // fn: 处理图片文件的回调函数 dirId: 目录id fileName: 文件的名称
-func readPathAllPic(path string, dirId int, fn func(dirId int, fileName string)) {
+func readPathAllPic(path string, dirId int, fn func(dirId int, fileName string) error) {
 	// 定义支持的图片后缀
 	imageExtensions := map[string]bool{
 		".jpg":  true,

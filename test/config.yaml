@@ -24,7 +24,7 @@ mysql:
   address: 10.147.18.26:3306
   username: root
   password: biaoge666
-  database: family-web
+  database: family-web-test
 
 # 日志等级
 logLevel: 0
