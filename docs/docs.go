@@ -51,6 +51,34 @@ const docTemplate = `{
                 }
             }
         },
+        "/album/fresh-photo": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "将数据库的照片同步到本地数据库存储",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "同步照片",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
         "/album/photo": {
             "get": {
                 "security": [
@@ -341,6 +369,26 @@ const docTemplate = `{
                     "login"
                 ],
                 "summary": "退出登录",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/management/menus": {
+            "post": {
+                "description": "根据当前的用户角色去获取菜单侧边栏",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "management"
+                ],
+                "summary": "获取管理页面的菜单",
                 "responses": {
                     "200": {
                         "description": "OK",

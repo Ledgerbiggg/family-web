@@ -115,6 +115,23 @@ paths:
       summary: 获取所有的相册分类
       tags:
       - album
+  /album/fresh-photo:
+    get:
+      consumes:
+      - application/json
+      description: 将数据库的照片同步到本地数据库存储
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      security:
+      - BearerAuth: []
+      summary: 同步照片
+      tags:
+      - album
   /album/photo:
     get:
       consumes:
@@ -279,6 +296,19 @@ paths:
       summary: 退出登录
       tags:
       - login
+  /management/menus:
+    post:
+      description: 根据当前的用户角色去获取菜单侧边栏
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.Result'
+      summary: 获取管理页面的菜单
+      tags:
+      - management
 securityDefinitions:
   BearerAuth:
     in: header

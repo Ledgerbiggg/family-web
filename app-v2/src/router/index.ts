@@ -58,6 +58,12 @@ const routes = [
         name: 'Photo',
         component: () => import('../views/home/album/PhotoView.vue')
     },
+    //管理界面
+    {
+        path: '/management',
+        name: 'Management',
+        component: () => import('../views/home/management/ManagementView.vue')
+    },
     // 404
     {
         path: '/:pathMatch(.*)*',

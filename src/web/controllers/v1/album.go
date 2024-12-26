@@ -129,9 +129,18 @@ func (h *AlbumController) photoByPid(context *gin.Context) {
 	context.Writer.Write(imageBytes)
 }
 
+// photoByPid godoc
+// @Summary      同步照片
+// @Description  将数据库的照片同步到本地数据库存储
+// @Tags         album
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {object}  common.Result
+// @Router       /album/fresh-photo [get]
 func (h *AlbumController) freshPhoto(context *gin.Context) {
 	go func() {
-		utils.ReadPathAllDir("./src/static/img/",
+		utils.ReadPathAllDir(h.c.Static.Dir+"/img/",
 			h.albumService.SaveCategoryByCategoryName,
 			h.albumService.SavePhotoByCategoryIdAndPhotoName)
 	}()
