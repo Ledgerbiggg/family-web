@@ -11,6 +11,6 @@ type PhotoVo struct {
 	Format      string     `json:"format"`      // 照片格式（如JPEG、PNG等）
 	CategoryID  int        `json:"categoryID"`  // 相册ID
 	Nickname    string     `json:"nickname"`    // 上传用户
-	UploadAt    *time.Time `json:"-"`           // 上传时间
-	UploadTime  string     `json:"uploadTime"`  // 上传时间
+	CreatedAt   *time.Time `json:"-"`           // 上传时间
+	CreatedTime string     `json:"createdTime"` // 上传时间
 }

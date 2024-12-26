@@ -96,7 +96,7 @@ func (a *AlbumService) GetCategoryPhotos(category string, role *login.Role) []*a
 			   ap.format,
 			   ap.category_id,
 			   u.nickname,
-			   ap.upload_at
+			   ap.created_at
 		FROM album_photo ap
 				 LEFT JOIN album_category ac ON ap.category_id = ac.id
 				 LEFT JOIN album_category_role acr ON ac.id = acr.category_id
@@ -105,7 +105,7 @@ func (a *AlbumService) GetCategoryPhotos(category string, role *login.Role) []*a
 		AND acr.role_id = ?;
 	`, category, role.Id).Find(&photoVos)
 	for i := range photoVos {
-		photoVos[i].UploadTime = photoVos[i].UploadAt.Format("2006-01-02 15:04:05")
+		photoVos[i].CreatedTime = photoVos[i].CreatedAt.Format("2006-01-02 15:04:05")
 	}
 	return photoVos
 }
@@ -151,7 +151,7 @@ func (a *AlbumService) GetImageBytesByCategoryIdAndPid(pid string) ([]byte, erro
 			   ap.format,
 			   ap.category_id,
 			   ap.upload_by,
-			   ap.upload_at
+			   ap.created_at
 		FROM album_photo ap
 		LEFT JOIN album_category ac ON ap.category_id = ac.id
 		WHERE ap.id = ?;

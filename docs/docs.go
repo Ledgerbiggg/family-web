@@ -51,6 +51,34 @@ const docTemplate = `{
                 }
             }
         },
+        "/album/fresh-photo": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "将数据库的照片同步到本地数据库存储",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "同步照片",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
         "/album/photo": {
             "get": {
                 "security": [
@@ -350,6 +378,26 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/management/menus": {
+            "post": {
+                "description": "根据当前的用户角色去获取菜单侧边栏",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "management"
+                ],
+                "summary": "获取管理页面的菜单",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -454,7 +502,7 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "日常生活.0",
+	Version:          "1.0",
 	Host:             "localhost:8001",
 	BasePath:         "/v1",
 	Schemes:          []string{},

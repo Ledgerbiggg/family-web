@@ -10,8 +10,9 @@ var Module = fx.Module(
 	// 控制器管理者
 	fx.Provide(controllers.NewControllerManager),
 	// 注册控制器
-	fx.Invoke(NewLoginController),  // 登录控制器
-	fx.Invoke(NewHomeController),   // 主页控制器
-	fx.Invoke(NewInviteController), // 邀请控制器
-	fx.Invoke(NewAlbumController),  // 相册控制器
+	fx.Invoke(NewLoginController),      // 登录控制器
+	fx.Invoke(NewHomeController),       // 主页控制器
+	fx.Invoke(NewInviteController),     // 邀请控制器
+	fx.Invoke(NewAlbumController),      // 相册控制器
+	fx.Invoke(NewManagementController), // 管理控制器
 )

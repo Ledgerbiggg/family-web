@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {ref, onMounted} from 'vue';
 import {albumPhotoService} from "@/services/album/photo.ts";
-import {message} from "ant-design-vue";  // 假设你的请求工具已经封装好了
+// import {message} from "ant-design-vue";
 
 // 使用 defineProps 定义 props
 const props = defineProps<{
@@ -21,7 +21,7 @@ const fetchImage = async () => {
     const res: any = await albumPhotoService(params);
     imageUrl.value = URL.createObjectURL(res); // 将返回的二进制数据转换为 URL
   } else {
-    message.warn('参数错误');
+    // message.warn('参数错误');
   }
 }
 
