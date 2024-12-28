@@ -6,6 +6,7 @@ import (
 	"family-web-server/src/web/common"
 	"family-web-server/src/web/controllers"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type ManagementController struct {
@@ -33,7 +34,7 @@ func (h *ManagementController) GetRoot() string {
 
 func (h *ManagementController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
-		{Method: "GET", Path: "/menus", Handle: h.menus},
+		{Method: http.MethodGet, Path: "/menus", Handle: h.menus}, // 获取管理页面的菜单
 	}
 }
 
@@ -41,7 +42,7 @@ func (h *ManagementController) RegisterController() {
 	h.cm.AddController(h)
 }
 
-// register godoc
+// menus godoc
 // @Summary      获取管理页面的菜单
 // @Description  根据当前的用户角色去获取菜单侧边栏
 // @Tags         management
@@ -49,5 +50,5 @@ func (h *ManagementController) RegisterController() {
 // @Success      200  {object}  common.Result
 // @Router       /management/menus [get]
 func (h *ManagementController) menus(context *gin.Context) {
-	context.JSON(200, common.NewSuccessResultWithData(nil))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(nil))
 }

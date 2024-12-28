@@ -1,4 +1,49 @@
--- auto-generated definition
+CREATE TABLE album_category
+(
+    id          int AUTO_INCREMENT COMMENT '自增主键'
+        PRIMARY KEY,
+    name        varchar(255)                                                      NOT NULL COMMENT '分类名称',
+    cover       int                                                               NOT NULL COMMENT '封面图片ID',
+    description text                                                              NULL COMMENT '分类描述',
+    enabled     tinyint(1)                              DEFAULT 1                 NOT NULL COMMENT '是否启用',
+    sort        int                                     DEFAULT 0                 NOT NULL COMMENT '排序字段',
+    view_count  int                                     DEFAULT 0                 NOT NULL COMMENT '视图计数',
+    status      enum ('active', 'inactive', 'archived') DEFAULT 'archived'        NOT NULL COMMENT '分类状态（active: 启用, inactive: 禁用, archived: 归档）',
+    created_by  int                                                               NOT NULL COMMENT '创建者ID',
+    created_at  timestamp                               DEFAULT CURRENT_TIMESTAMP NULL COMMENT '创建时间',
+    updated_at  timestamp                                                         NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+)
+    COMMENT '相册分类表';
+
+CREATE INDEX album_category_name_index
+    ON album_category (name)
+    COMMENT '相册名称的索引';
+
+CREATE TABLE album_category_role
+(
+    id          int AUTO_INCREMENT COMMENT '自增主键'
+        PRIMARY KEY,
+    category_id int  NOT NULL COMMENT '相册分类ID',
+    role_id     int  NOT NULL COMMENT '角色ID',
+    description text NULL COMMENT '描述'
+)
+    COMMENT '相册分类权限表';
+
+CREATE TABLE album_photo
+(
+    id          bigint AUTO_INCREMENT COMMENT '照片ID'
+        PRIMARY KEY,
+    name        varchar(255)                         NOT NULL COMMENT '照片名称',
+    description text                                 NULL COMMENT '照片描述',
+    sort        int        DEFAULT 0                 NULL COMMENT '排序',
+    is_lock     tinyint(1) DEFAULT 0                 NULL COMMENT '是否锁定',
+    format      varchar(10)                          NOT NULL COMMENT '照片格式',
+    category_id int                                  NOT NULL COMMENT '相册ID',
+    upload_by   int                                  NOT NULL COMMENT '上传用户',
+    created_at  timestamp  DEFAULT CURRENT_TIMESTAMP NULL COMMENT '上传时间'
+)
+    COMMENT '相册照片表';
+
 CREATE TABLE home_card
 (
     id          int AUTO_INCREMENT COMMENT '主键'
@@ -8,11 +53,11 @@ CREATE TABLE home_card
     image       varchar(255)                       NULL COMMENT '卡片的图片新',
     path        varchar(255)                       NOT NULL COMMENT '卡片指向的路径',
     created_at  datetime DEFAULT CURRENT_TIMESTAMP NULL COMMENT '卡片的创建时间',
-    updated_at  datetime DEFAULT CURRENT_TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '卡片的更新时间'
+    updated_at  datetime DEFAULT CURRENT_TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '卡片的更新时间',
+    sort        int                                NOT NULL COMMENT '排序'
 )
     COMMENT '首页的卡片信息表';
 
--- auto-generated definition
 CREATE TABLE invite_link
 (
     id                int AUTO_INCREMENT COMMENT '主键'
@@ -29,7 +74,6 @@ CREATE TABLE invite_link
 )
     COMMENT '邀请链接表';
 
--- auto-generated definition
 CREATE TABLE permission
 (
     id          int AUTO_INCREMENT COMMENT '主键'
@@ -39,7 +83,6 @@ CREATE TABLE permission
 )
     COMMENT '权限表';
 
--- auto-generated definition
 CREATE TABLE role
 (
     id          int AUTO_INCREMENT COMMENT '主键'
@@ -49,7 +92,6 @@ CREATE TABLE role
 )
     COMMENT '角色表';
 
--- auto-generated definition
 CREATE TABLE role_home_card_access
 (
     id           int AUTO_INCREMENT COMMENT '主键'
@@ -60,7 +102,6 @@ CREATE TABLE role_home_card_access
 )
     COMMENT '角色与主页卡片访问关系表';
 
--- auto-generated definition
 CREATE TABLE role_permission
 (
     id            int AUTO_INCREMENT COMMENT '主键'
@@ -71,8 +112,18 @@ CREATE TABLE role_permission
 )
     COMMENT '角色与权限关联表';
 
+CREATE TABLE tag
+(
+    id          bigint AUTO_INCREMENT COMMENT '自增主键'
+        PRIMARY KEY,
+    name        varchar(255)                       NOT NULL COMMENT '名称',
+    description text                               NULL COMMENT '标签描述',
+    type        int                                NULL COMMENT '标签类型,1-用户,2-相册,3-照片',
+    create_at   datetime DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+    update_at   datetime                           NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+)
+    COMMENT '标签表';
 
--- auto-generated definition
 CREATE TABLE user
 (
     id              int AUTO_INCREMENT COMMENT '主键'
@@ -91,172 +142,16 @@ CREATE TABLE user
     COMMENT '用户表';
 
 -- auto-generated definition
-CREATE TABLE album_category
+CREATE TABLE tag
 (
-    id          INT AUTO_INCREMENT COMMENT '自增主键' PRIMARY KEY,
-    name        VARCHAR(255)                            NOT NULL COMMENT '分类名称',
-    cover       INT                                     NOT NULL COMMENT '封面图片ID',
-    description TEXT                                    NULL COMMENT '分类描述',
-    enabled     TINYINT(1) DEFAULT 1                    NOT NULL COMMENT '是否启用',
-    sort        INT        DEFAULT 0                    NOT NULL COMMENT '排序字段',
-    view_count  INT        DEFAULT 0                    NOT NULL COMMENT '视图计数',
-    status      ENUM ('active', 'inactive', 'archived') NOT NULL COMMENT '分类状态（active: 启用, inactive: 禁用, archived: 归档）',
-    created_by  INT                                     NOT NULL COMMENT '创建者ID',
-    created_at  TIMESTAMP  DEFAULT CURRENT_TIMESTAMP    NULL COMMENT '创建时间',
-    updated_at  TIMESTAMP                               NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) COMMENT '相册分类表';
-
--- auto-generated definition
-CREATE TABLE album_photo
-(
-    id          bigint AUTO_INCREMENT COMMENT '照片ID'
+    id          bigint AUTO_INCREMENT COMMENT '自增主键'
         PRIMARY KEY,
-    name        varchar(255)                         NOT NULL COMMENT '照片名称',
-    description text                                 NULL COMMENT '照片描述',
-    sort        int        DEFAULT 0                 NULL COMMENT '排序',
-    is_lock     tinyint(1) DEFAULT 0                 NULL COMMENT '是否锁定',
-    format      varchar(10)                          NOT NULL COMMENT '照片格式',
-    category_id int                                  NOT NULL COMMENT '相册ID',
-    upload_by   int                                  NOT NULL COMMENT '上传用户',
-    upload_time datetime   DEFAULT CURRENT_TIMESTAMP NULL COMMENT '上传时间'
+    name        varchar(255)                       NOT NULL COMMENT '名称',
+    description text                               NULL COMMENT '标签描述',
+    type        int                                NULL COMMENT '标签类型,1-用户,2-相册,3-照片',
+    created_at   datetime DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
+    updated_at   datetime                           NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 )
-    COMMENT '相册照片表';
-
--- auto-generated definition
-CREATE TABLE album_category_role
-(
-    id          int AUTO_INCREMENT COMMENT '自增主键'
-        PRIMARY KEY,
-    category_id int  NOT NULL COMMENT '相册分类ID',
-    role_id     int  NOT NULL COMMENT '角色ID',
-    description text NULL COMMENT '描述'
-)
-    COMMENT '相册分类权限表';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    COMMENT '标签表';
 
 

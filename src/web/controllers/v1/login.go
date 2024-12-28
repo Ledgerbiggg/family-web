@@ -10,6 +10,7 @@ import (
 	"family-web-server/src/web/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type LoginController struct {
@@ -46,11 +47,11 @@ func (c *LoginController) GetRoot() string {
 // verification, and logout with their respective HTTP methods and handlers.
 func (c *LoginController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
-		{Method: "GET", Path: "/captcha", Handle: c.captcha},
-		{Method: "POST", Path: "/login", Handle: c.login},
-		{Method: "POST", Path: "/register", Handle: c.register},
-		{Method: "POST", Path: "/verify", Handle: c.verify},
-		{Method: "POST", Path: "/logout", Handle: c.logout},
+		{Method: http.MethodGet, Path: "/captcha", Handle: c.captcha},    // 获取验证码
+		{Method: http.MethodPost, Path: "/login", Handle: c.login},       // 登录
+		{Method: http.MethodPost, Path: "/register", Handle: c.register}, // 注册
+		{Method: http.MethodPost, Path: "/verify", Handle: c.verify},     // 找回密码
+		{Method: http.MethodPost, Path: "/logout", Handle: c.logout},     // 退出登录
 	}
 }
 
@@ -119,7 +120,7 @@ func (c *LoginController) login(context *gin.Context) {
 			return
 		}
 		context.Header("token", token)
-		context.JSON(200, common.NewSuccessResultWithData(nil))
+		context.JSON(http.StatusOK, common.NewSuccessResultWithData(nil))
 	} else {
 		context.Error(common.LoginErrorError)
 	}
@@ -133,7 +134,7 @@ func (c *LoginController) login(context *gin.Context) {
 // @Produce      json
 // @Param        body  body  login.RegisterDto  true  "用户信息"
 // @Success      200  {object}  common.Result
-// @Router       /login [post]
+// @Router       /register [post]
 func (c *LoginController) register(context *gin.Context) {
 	var r = &login.RegisterDto{}
 	// 参数绑定
@@ -162,7 +163,7 @@ func (c *LoginController) register(context *gin.Context) {
 		context.Error(common.UserIsExistError)
 		return
 	}
-	context.JSON(200, common.NewSuccessResultWithData(nil))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(nil))
 
 }
 
@@ -174,7 +175,7 @@ func (c *LoginController) register(context *gin.Context) {
 // @Produce      json
 // @Param        body  body  login.RegisterDto  true  "用户信息"
 // @Success      200  {object}  common.Result
-// @Router       /login [post]
+// @Router       /verify [post]
 func (c *LoginController) verify(context *gin.Context) {
 	var v = &login.VerifyDto{}
 	if err := context.ShouldBindJSON(v); err != nil {
@@ -188,7 +189,7 @@ func (c *LoginController) verify(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	context.JSON(200, common.NewSuccessResultWithData(nil))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(nil))
 
 }
 
@@ -199,9 +200,9 @@ func (c *LoginController) verify(context *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  common.Result
-// @Router       /login [post]
+// @Router       /logout [post]
 func (c *LoginController) logout(context *gin.Context) {
 	//TODO 使用redis去删除token
 	context.Header("token", "logout")
-	context.JSON(200, common.NewSuccessResultWithData(nil))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(nil))
 }

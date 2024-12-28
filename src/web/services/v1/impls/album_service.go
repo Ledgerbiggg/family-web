@@ -125,7 +125,7 @@ func (a *AlbumService) GetCategoryList(role *login.Role) []*albumVo.CategoryVo {
 			   ac.created_by,
 			   ac.created_at,
 			   ac.updated_at,
-			   CONCAT(ap.name, '.', ap.format) AS cover_pic
+			   ap.name AS cover_pic
 		FROM album_category ac
 				 LEFT JOIN album_photo ap ON ac.cover = ap.id
 				 LEFT JOIN album_category_role acr ON ac.id = acr.category_id

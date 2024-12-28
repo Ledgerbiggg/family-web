@@ -176,7 +176,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/home/cards": {
+        "/home/getTagsByType": {
             "get": {
                 "security": [
                     {
@@ -358,6 +358,40 @@ const docTemplate = `{
         },
         "/login": {
             "post": {
+                "description": "使用验证码+账号+密码登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "login"
+                ],
+                "summary": "登录用户",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.UserDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
                 "description": "退出登录,清除token",
                 "consumes": [
                     "application/json"
@@ -380,7 +414,7 @@ const docTemplate = `{
             }
         },
         "/management/menus": {
-            "post": {
+            "get": {
                 "description": "根据当前的用户角色去获取菜单侧边栏",
                 "produces": [
                     "application/json"
@@ -389,6 +423,226 @@ const docTemplate = `{
                     "management"
                 ],
                 "summary": "获取管理页面的菜单",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "使用验证码+账号+密码+确认密码注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "login"
+                ],
+                "summary": "注册",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.RegisterDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/add": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "添加新的标签",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tag"
+                ],
+                "summary": "添加标签",
+                "parameters": [
+                    {
+                        "description": "标签信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tag.TagDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/update": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "更新现有的标签",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tag"
+                ],
+                "summary": "更新标签",
+                "parameters": [
+                    {
+                        "description": "标签信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tag.TagDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据 URL 中的 id 参数删除标签",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tag"
+                ],
+                "summary": "删除标签",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "标签 ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/tags/{type}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "根据 URL 中的 type 参数获取指定类型的标签",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tag"
+                ],
+                "summary": "获取指定类型的标签",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "标签类型,0 = 灰色,1 = 蓝色,2 = 绿色,3 = 红色",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/common.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/verify": {
+            "post": {
+                "description": "使用验证码+账号+真实姓名注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "login"
+                ],
+                "summary": "找回密码",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/login.RegisterDto"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -487,6 +741,32 @@ const docTemplate = `{
                 "username": {
                     "description": "必填，最小3个字符，最大20个字符",
                     "type": "string"
+                }
+            }
+        },
+        "tag.TagDto": {
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "description": {
+                    "description": "可选",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "必填",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "必填且必须在 0-3 之间",
+                    "type": "integer",
+                    "maximum": 4,
+                    "minimum": 0
                 }
             }
         }

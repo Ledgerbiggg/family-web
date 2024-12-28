@@ -12,4 +12,5 @@ var Module = fx.Module(
 	fx.Provide(impls2.NewHomeService),   // 登录服务
 	fx.Provide(impls2.NewInviteService), // 邀请服务
 	fx.Provide(impls2.NewAlbumService),  // 相册服务
+	fx.Provide(impls2.NewTagService),    // 标签服务
 )

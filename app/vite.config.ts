@@ -1,31 +1,31 @@
-import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
+import {resolve} from 'path'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
+// https://vite.dev/config/
 export default defineConfig({
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8001/v1',
-        changeOrigin: true,
-        rewrite: (path) => {
-          console.log('Rewriting path:', path); // 打印路径
-          return path.replace(/^\/api/, '');
-        },
-        secure: false,
-      },
-    }
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8001/v1',
+                changeOrigin: true,
+                rewrite: (path: string) => {
+                    console.log('Rewriting path:', path); // 打印路径
+                    return path.replace(/^\/api/, '');
+                },
+                secure: false,
+            },
+        }
 
-  },
-  plugins: [
-    vue(),
-    vueDevTools(),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
     },
-  },
+    resolve: {
+        alias: [
+            {
+                find: '@',
+                replacement: resolve(__dirname, 'src')
+            }
+        ]
+    },
+    plugins: [vue(), vueDevTools(),],
 })

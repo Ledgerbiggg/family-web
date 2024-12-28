@@ -8,6 +8,7 @@ import (
 	"family-web-server/src/web/models/eneity/login"
 	"family-web-server/src/web/services/v1/interfaces"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type HomeController struct {
@@ -39,7 +40,7 @@ func (h *HomeController) GetRoot() string {
 
 func (h *HomeController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
-		{Method: "GET", Path: "/cards", Handle: h.cards},
+		{Method: http.MethodGet, Path: "/getTagsByType", Handle: h.cards}, // 获取主页home中的卡片
 	}
 }
 
@@ -55,13 +56,13 @@ func (h *HomeController) RegisterController() {
 // @Produce      json
 // @Security     BearerAuth
 // @Success      200  {object}  common.Result
-// @Router       /home/cards [get]
+// @Router       /home/getTagsByType [get]
 func (h *HomeController) cards(context *gin.Context) {
 	value, exists := context.Get("role")
 	if exists {
 		role := value.(*login.Role)
-		context.JSON(200, common.NewSuccessResultWithData(h.homeService.GetHomeCardData(role)))
+		context.JSON(http.StatusOK, common.NewSuccessResultWithData(h.homeService.GetHomeCardData(role)))
 	} else {
-		context.JSON(200, common.AdminRoleError)
+		context.JSON(http.StatusOK, common.AdminRoleError)
 	}
 }

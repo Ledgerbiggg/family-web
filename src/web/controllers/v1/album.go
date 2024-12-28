@@ -9,6 +9,7 @@ import (
 	"family-web-server/src/web/services/v1/interfaces"
 	"family-web-server/src/web/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"strings"
 )
 
@@ -41,10 +42,13 @@ func (h *AlbumController) GetRoot() string {
 
 func (h *AlbumController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
-		{Method: "GET", Path: "/category-list", Handle: h.categories},
-		{Method: "GET", Path: "/:category/photos", Handle: h.photosByCategory},
-		{Method: "GET", Path: "/photo", Handle: h.photoByPid},
-		{Method: "GET", Path: "/fresh-photo", Handle: h.freshPhoto},
+		{Method: http.MethodGet, Path: "/category-list", Handle: h.categories},              // 获取所有的相册
+		{Method: http.MethodPost, Path: "/category-add", Handle: h.categoryAdd},             // 添加相册
+		{Method: http.MethodPut, Path: "/category-update", Handle: h.categoryUpdate},        // 添加相册
+		{Method: http.MethodDelete, Path: "/category-delete/:id", Handle: h.categoryDelete}, // 删除相册
+		{Method: http.MethodGet, Path: "/:category/photos", Handle: h.photosByCategory},     // 获取相册下的照片
+		{Method: http.MethodGet, Path: "/photo", Handle: h.photoByPid},                      // 获取照片字节
+		{Method: http.MethodGet, Path: "/fresh-photo", Handle: h.freshPhoto},                // 同步照片
 	}
 }
 
@@ -65,10 +69,10 @@ func (h *AlbumController) categories(context *gin.Context) {
 	value, exists := context.Get("role")
 	if exists {
 		role := value.(*login.Role)
-		context.JSON(200, common.NewSuccessResultWithData(h.albumService.GetCategoryList(role)))
+		context.JSON(http.StatusOK, common.NewSuccessResultWithData(h.albumService.GetCategoryList(role)))
 		return
 	}
-	context.JSON(200, common.AdminRoleError)
+	context.JSON(http.StatusOK, common.AdminRoleError)
 }
 
 // photosByCategory godoc
@@ -92,7 +96,7 @@ func (h *AlbumController) photosByCategory(context *gin.Context) {
 		context.Error(common.BadRequestError)
 		return
 	}
-	context.JSON(200, common.NewSuccessResultWithData(h.albumService.GetCategoryPhotos(category, role)))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(h.albumService.GetCategoryPhotos(category, role)))
 }
 
 // photoByPid godoc
@@ -144,5 +148,17 @@ func (h *AlbumController) freshPhoto(context *gin.Context) {
 			h.albumService.SaveCategoryByCategoryName,
 			h.albumService.SavePhotoByCategoryIdAndPhotoName)
 	}()
-	context.JSON(200, common.NewSuccessResult())
+	context.JSON(http.StatusOK, common.NewSuccessResult())
+}
+
+func (h *AlbumController) categoryAdd(context *gin.Context) {
+
+}
+
+func (h *AlbumController) categoryUpdate(context *gin.Context) {
+
+}
+
+func (h *AlbumController) categoryDelete(context *gin.Context) {
+
 }

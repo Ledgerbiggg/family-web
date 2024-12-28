@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import {useRouter} from "vue-router";
-import {ref, onMounted, onBeforeUnmount} from "vue";
+import { useRouter } from "vue-router";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 
 const router = useRouter();
 
 // 倒计时剩余时间
 const countdown = ref(5);
 
-// 定义一个变量来存储定时器 ID
+// 定义一个变量来存储定时器 ID，类型指定为 number | null
 let interval: number | null = null;
 
 // 创建一个函数来处理倒计时
 const startCountdown = () => {
-  interval = setInterval(() => {
+  interval = window.setInterval(() => {
     countdown.value--; // 每秒减少1
     if (countdown.value <= 0) {
-      clearInterval(interval as number); // 倒计时结束，清除定时器
-      router.push({name: "Home"}); // 跳转到登录页面
+      // 清除定时器，使用类型断言，确保 interval 是 number 类型
+      if (interval !== null) {
+        clearInterval(interval); // 清除定时器
+      }
+      router.push({ name: "Home" }); // 跳转到登录页面
     }
   }, 1000);
 };
@@ -27,7 +30,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   // 在组件销毁时清除定时器
-  if (interval) {
+  if (interval !== null) {
     clearInterval(interval); // 清除定时器
   }
 });

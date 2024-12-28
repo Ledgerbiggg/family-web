@@ -1,33 +1,21 @@
 {
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ],
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "target": "es2020",
-    // 或者 es2022、esnext 等
-    "module": "esnext",
-    // 必须使用 esnext 或其他兼容的选项
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "jsx": "preserve",
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "noImplicitAny": true,
-    "types": [
-      "vite/client",
-      "vue"
-    ],
-    "allowSyntheticDefaultImports": true
+    "baseUrl": "./",   // 设置基础路径
+    "paths": {
+      "@/*": ["src/*"]  // 配置 @ 别名指向 src 目录
+    },
+    "types": ["vite/client", "vue"]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

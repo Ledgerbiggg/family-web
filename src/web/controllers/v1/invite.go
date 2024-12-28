@@ -11,6 +11,7 @@ import (
 	"family-web-server/src/web/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type InviteController struct {
@@ -45,10 +46,10 @@ func (ic *InviteController) GetRoot() string {
 
 func (ic *InviteController) GetRoutes() []*controllers.Route {
 	return []*controllers.Route{
-		{Method: "POST", Path: "/get-link", Handle: ic.getInviteLink},
-		{Method: "GET", Path: "/qr-code", Handle: ic.qrCode},
-		{Method: "GET", Path: "/info", Handle: ic.inviteInfo},
-		{Method: "POST", Path: "/register", Handle: ic.inviteRegister},
+		{Method: http.MethodPost, Path: "/get-link", Handle: ic.getInviteLink},  // 获取邀请链接
+		{Method: http.MethodGet, Path: "/qr-code", Handle: ic.qrCode},           // 获取邀请二维码
+		{Method: http.MethodGet, Path: "/info", Handle: ic.inviteInfo},          // 获取邀请信息
+		{Method: http.MethodPost, Path: "/register", Handle: ic.inviteRegister}, // 邀请注册
 	}
 }
 
@@ -77,7 +78,7 @@ func (ic *InviteController) getInviteLink(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	context.JSON(200, common.NewSuccessResultWithData(map[string]string{"uid": uid}))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(map[string]string{"uid": uid}))
 }
 
 // inviteInfo godoc
@@ -105,7 +106,7 @@ func (ic *InviteController) inviteInfo(context *gin.Context) {
 		context.Error(err)
 		return
 	}
-	context.JSON(200, common.NewSuccessResultWithData(login2.NewInviteVo(info)))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(login2.NewInviteVo(info)))
 }
 
 // qrCode godoc
@@ -181,7 +182,7 @@ func (ic *InviteController) inviteRegister(context *gin.Context) {
 		return
 	}
 
-	context.JSON(200, common.NewSuccessResultWithData(nil))
+	context.JSON(http.StatusOK, common.NewSuccessResultWithData(nil))
 }
 func (ic *InviteController) RegisterController() {
 	ic.cm.AddController(ic)

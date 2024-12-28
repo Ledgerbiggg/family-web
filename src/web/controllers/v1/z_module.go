@@ -15,4 +15,5 @@ var Module = fx.Module(
 	fx.Invoke(NewInviteController),     // 邀请控制器
 	fx.Invoke(NewAlbumController),      // 相册控制器
 	fx.Invoke(NewManagementController), // 管理控制器
+	fx.Invoke(NewTagController),        // 标签控制器
 )

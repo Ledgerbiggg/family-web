@@ -11,6 +11,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"io"
+	"net/http"
 	"strings"
 )
 
@@ -47,7 +48,7 @@ func (cm *CaptchaMiddleware) Handle() gin.HandlerFunc {
 			// 获取请求体中的验证码（处理 JSON 请求体）
 			var requestBody map[string]any
 			if err := context.ShouldBindJSON(&requestBody); err != nil {
-				context.JSON(200, common.BadRequestError)
+				context.JSON(http.StatusOK, common.BadRequestError)
 				context.Abort()
 				return
 			}

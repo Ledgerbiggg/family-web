@@ -60,6 +60,10 @@ var Module = fx.Module("web",
 				fmt.Sprintf("The Swagger UI is available at : "+
 					"http://localhost:%d/swagger/index.html",
 					c.Address.Port))
+			l.Debug(
+				fmt.Sprintf("The Swagger Doc is available at : "+
+					"http://localhost:%d/swagger/doc.json",
+					c.Address.Port))
 		}
 
 		l.Info(fmt.Sprintf("server started at %d", c.Address.Port))

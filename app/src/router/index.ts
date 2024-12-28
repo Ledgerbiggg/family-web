@@ -1,6 +1,11 @@
 // src/router/index.ts
-import {createRouter, createWebHistory} from 'vue-router'
-import {message} from "ant-design-vue";
+import {
+    createRouter,
+    createWebHistory,
+    NavigationGuardNext,
+    RouteLocationNormalized,
+    RouteLocationNormalizedLoaded
+} from 'vue-router'
 
 // 定义路由
 const routes = [
@@ -43,15 +48,48 @@ const routes = [
         path: '/album',
         name: 'Album',
         component: () => import('../views/home/album/CategoryView.vue'),
-        beforeEnter: (to: any, from: any, next: any) => {
-            checkFromHome(from, next); // 调用抽离的函数
-        },
+        // beforeEnter: (_: RouteLocationNormalized, from: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
+        //     checkFromHome(from, next); // 调用抽离的函数
+        // },
     },
     // 照片
     {
         path: '/photo/:category',
         name: 'Photo',
-        component: () => import('../views/home/album/PhotoView2.vue')
+        component: () => import('../views/home/album/PhotoView.vue')
+    },
+    //管理界面
+    {
+        path: '/management',
+        name: 'Management',
+        component: () => import('../views/home/management/ManagementView.vue'),
+        children: [
+            {
+                path:'category-management',
+                name:'CategoryManagement',
+                component: () => import('../views/home/management/album/CategoryManagementView.vue')
+            },
+            {
+                path:'photo-management',
+                name:'PhotoManagement',
+                component: () => import('../views/home/management/album/PhotoManagementView.vue')
+            },
+            {
+                path:'sync-data-management',
+                name:'SyncDataManagement',
+                component: () => import('../views/home/management/album/SyncDataManagementView.vue')
+            },
+            {
+                path:'user-management',
+                name:'UserManagement',
+                component: () => import('../views/home/management/user/UserManagementView.vue')
+            },
+            {
+                path:'invite-member-managements',
+                name:'InviteMemberManagements',
+                component: () => import('../views/home/management/user/InviteMemberManagementsView.vue')
+            }
+        ]
     },
     // 404
     {
@@ -86,7 +124,7 @@ const router = createRouter({
 
 
 // 路由守卫(放行登录+注册+忘记密码)
-router.beforeEach((to, from, next) => {
+router.beforeEach((_: RouteLocationNormalized, __: RouteLocationNormalizedLoaded, next: NavigationGuardNext) => {
     return next()
 })
 

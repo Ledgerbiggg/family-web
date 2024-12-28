@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import api from "@/services/api.ts";
 import {message} from "ant-design-vue";
 import {useRoute, useRouter} from "vue-router";
+import {InviteInfo, inviteInfoService, inviteRegisterService, InviteUser} from "@/services/login/invite.ts";
 
 const route = useRoute()
 const router = useRouter()
@@ -16,23 +16,8 @@ onMounted(() => {
 // 获取 captchaImage 的引用
 const captchaImage = ref<HTMLImageElement | null>(null);
 
-interface inviteInfo {
-  inviterPhone: string
-  inviterRealName: string
-  invitedAdmin: boolean
-  description: string
-}
-
-// 定义 user 对象的类型
-interface User {
-  inviteUid: string
-  realName: string
-  username: string
-  captcha: string
-}
-
 // 定义 inviteInfo 对象的类型
-const InviteInfo = ref<inviteInfo>({
+const InviteInfo = ref<InviteInfo>({
   inviterPhone: "",
   inviterRealName: "",
   invitedAdmin: false,
@@ -40,7 +25,7 @@ const InviteInfo = ref<inviteInfo>({
 })
 
 // 创建一个响应式的 user 对象
-const user = ref<User>({
+const user = ref<InviteUser>({
   inviteUid: "",
   realName: "",
   username: "",
@@ -53,10 +38,6 @@ const refresh = () => {
     captchaImage.value.src = import.meta.env.VITE_BASE_URL + "/captcha?_t=" + Date.now();
   }
 }
-// 登录方法
-const backLogin = () => {
-  router.push({name: "Login"});
-}
 
 // 注册方法
 const verify = () => {
@@ -65,22 +46,21 @@ const verify = () => {
     return
   }
   user.value.inviteUid = String(route.query.uid || '');
-  api.post("/invite/register", {...user.value}).then((res: any) => {
+  if (inviteRegisterService(user.value)) {
     message.success("注册成功,初始密码:123456");
     router.push({name: "Login"});
-  }).catch((rea: any) => {
+  } else {
     refresh()
-  })
+  }
 }
 // 获取邀请信息
-const getInviteInfo = () => {
-  api.get("/invite/info", {uid: route.query.uid}).then((res: any) => {
-    if (res) {
-      InviteInfo.value = res
-    }
-  }).catch((rea: any) => {
-    router.push({name: "Login"});
-  })
+const getInviteInfo = async () => {
+  let res = await inviteInfoService(route.query.uid)
+  if (res) {
+    InviteInfo.value = res
+  } else {
+    await router.push({name: "Login"});
+  }
 }
 </script>
 

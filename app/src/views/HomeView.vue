@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
-import Button from "@/components/Button.vue";
-import http from "@/services/api.ts";
+import Button from "@/components/ButtonComponent.vue";
 import {useRouter} from "vue-router";
+import {homeCardsService} from "@/services/home/home.ts";
 
 const router = useRouter()
 
@@ -107,19 +107,16 @@ const toPath = (item: any) => {
   router.push(item.path);
 }
 // 获取后台的数据
-const getCardData = () => {
-  http.get("/home/cards").then((res: any) => {
-    if (res) {
-      //image: new URL('@/assets/img/01.png', import.meta.url).href,
-      res.forEach((i: any) => {
-        i.image = new URL(`/src/assets/img/${i.image}`, import.meta.url).href;
-      });
-      items.value = res
-    }
-  }).finally(() => {
-    // 数据获取后执行这些操作
-    startAnimation()
-  })
+const getCardData = async () => {
+  let res = await homeCardsService()
+  if (res) {
+    //image: new URL('@/assets/img/01.png', import.meta.url).href,
+    res.forEach((i: any) => {
+      i.image = new URL(`/src/assets/img/${i.image}`, import.meta.url).href;
+    });
+    items.value = res
+  }
+  startAnimation()
 }
 // 开始动画效果
 const startAnimation = () => {
@@ -158,7 +155,6 @@ const flipAndNavigate = (item: any) => {
     }, 1000); // 翻转动画时间为1s，确保在翻转后开始缩放
   }
 };
-
 
 
 onMounted(() => {
