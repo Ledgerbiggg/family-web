@@ -75,6 +75,18 @@ func (h *AlbumController) categories(context *gin.Context) {
 	context.JSON(http.StatusOK, common.AdminRoleError)
 }
 
+func (h *AlbumController) categoryAdd(context *gin.Context) {
+
+}
+
+func (h *AlbumController) categoryUpdate(context *gin.Context) {
+
+}
+
+func (h *AlbumController) categoryDelete(context *gin.Context) {
+
+}
+
 // photosByCategory godoc
 // @Summary      相册分类照片获取
 // @Description  通过相册分类id获取这个分类下面的所有照片信息
@@ -149,16 +161,4 @@ func (h *AlbumController) freshPhoto(context *gin.Context) {
 			h.albumService.SavePhotoByCategoryIdAndPhotoName)
 	}()
 	context.JSON(http.StatusOK, common.NewSuccessResult())
-}
-
-func (h *AlbumController) categoryAdd(context *gin.Context) {
-
-}
-
-func (h *AlbumController) categoryUpdate(context *gin.Context) {
-
-}
-
-func (h *AlbumController) categoryDelete(context *gin.Context) {
-
 }
